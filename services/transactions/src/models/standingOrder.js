@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import {db } from '../db/client.js'
+import {accounts} from "../db/schemas/accountSchema.js";
 
 const _mem = new Map();
 
@@ -14,8 +16,9 @@ const _mem = new Map();
             nextRunAt: "date",
             isActive: true,
         };
+await db.insert(accounts).values(item);
+return item;
 
-        _mem.set(item.standingOrderId, item);
 
         export const StandingOrder = {
 

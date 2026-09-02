@@ -40,7 +40,7 @@ export const Accounts = {
   },
 
   async update({ accountId, ...rest }) {
-
+//{ accountId, ...rest }
       const result = await db
           .update(accounts)
           .set(rest)
