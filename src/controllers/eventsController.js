@@ -1,6 +1,9 @@
 import {
     triggerEventSchema,
-    previewNextWindowSchema
+    previewNextWindowSchema,
+    listEventsSchema,
+    pauseEventsSchema,
+    resumeEventsSchema
 } from "../validationSchemas/createEventTemplateSchema.js";
 
 import * as eventsService from "../services/eventsService.js";
@@ -23,6 +26,40 @@ export const previewNextWindow = async (req, res, next) => {
     try {
         const validatedData = validate(previewNextWindowSchema, req.body);
         const result = await eventsService.previewNextWindow(validatedData);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// [GET] Endpoint 3: Auditní výpis událostí
+export const listEvents = async (req, res, next) => {
+    try {
+        const validatedFilters = validate(listEventsSchema, req.query);
+        const result = await eventsService.listEvents(validatedFilters);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// [POST] Endpoint 4: Pozastavení generování událostí
+export const pauseEvents = async (req, res, next) => {
+    try {
+        validate(pauseEventsSchema, req.body || {});
+        const result = await eventsService.pauseEvents();
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// [POST] Endpoint 5: Obnovení generování událostí
+export const resumeEvents = async (req, res, next) => {
+    try {
+        validate(resumeEventsSchema, req.body || {});
+        const result = await eventsService.resumeEvents();
         res.status(200).json(result);
     } catch (error) {
         next(error);

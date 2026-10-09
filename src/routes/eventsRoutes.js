@@ -3,6 +3,12 @@ import * as eventsController from "../controllers/eventsController.js";
 
 export const router = Router();
 
-router.post("/trigger", eventsController.triggerRandomEvent);
+router.post("/triggerRandomEvent", eventsController.triggerRandomEvent);
 
 router.post("/previewNextWindow", eventsController.previewNextWindow);
+
+router.get("/listEvents", eventsController.listEvents);
+
+router.post("/pauseEvents", eventsController.pauseEvents);
+
+router.post("/resumeEvents", eventsController.resumeEvents);
