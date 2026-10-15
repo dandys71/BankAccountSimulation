@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webová aplikace pro podporu výuky finanční gramotnosti studentů SOU</title>
+    <style>
+        .modal.bottom-sheet.custom-high-modal {
+            min-height: 75dvh;
+            max-height: 90dvh;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+    </style>
+</head>
+<body class="blue lighten-2" style="margin: 0; padding: 0; overflow: hidden;">
+    <main
+        style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+
+        <div style="padding: 24px; background-color: #000000AA; color: #FFFFFF; flex-shrink: 0;">
+            <span style="display: block;">Přihlášen(a) jako <span class="blue-text text-lighten-3">Jan
+                    Novák</span></span>
+            <span style="display: block;">Dnes je <span class="blue-text text-lighten-3">10.1.</span>, čas <span
+                    class="blue-text text-lighten-3">1:01</span></span>
+            <br>
+            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+                style="width: 125px; text-transform: none; border-radius: 4px;">
+                Odhlásit se
+            </button>
+        </div>
+
+        <div
+            style="padding: 24px 24px 110px 24px; background-color: #000000CC; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
+
+            <!-- vygenerovat dynamicky -->
+            <div class="card-panel grey darken-4"
+                style="margin-bottom: 12px; width: 100%; text-align: left; border: none;">
+                <!-- pojmenovat podle uctu -->
+                <h5 class="white-text"
+                    style="margin: 0 0 6px 0; font-weight: bold; font-size: 1.3rem; text-transform: none;">Bankovní účet
+                </h5>
+                <!-- tady taky podle uctu -->
+                <p class="grey-text text-lighten-1" style="margin: 0 0 6px 0; font-size: 0.9rem; text-transform: none;">
+                    111-123456789/0100</p>
+                <!-- tady se meni podle nastaveny meny (jestli se teda nastavuje na neco jinyho) -->
+                <p class="grey-text text-lighten-2" style="margin: 0; font-size: 0.8rem; text-transform: none;">123 456
+                    789 CZK</p>
+            </div>
+
+            <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 16px;">
+                <button class="btn waves-effect waves-light blue accent-2 white-text modal-trigger"
+                    data-target="filter-modal" type="button"
+                    style="width: 92%; display: flex; justify-content: space-between; align-items: center; text-transform: none; border-radius: 4px; padding: 0 16px; height: 44px;">
+                    <span>Filtrovat transakce</span>
+                    <i class="material-icons" style="margin: 0; font-size: 1.3rem;">tune</i>
+                </button>
+            </div>
+
+            <div class="card-panel grey darken-3" style="margin-bottom: 12px; width: 100%; border: none;">
+                <h5 class="white-text" style="margin: 0 0 16px 0; font-weight: bold; font-size: 1.3rem;">Dnes</h5>
+                
+                <!-- taky vsechno potom generovat dynamicky -->
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #212121; border-radius: 6px; margin-bottom: 8px;">
+                    <span>Petr Petrolej</span>
+                    <span class="grey-text text-lighten-1">-25,00 CZK</span>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #212121; border-radius: 6px; margin-bottom: 8px;">
+                    <span>Marie Testová</span>
+                    <span class="grey-text text-lighten-1">-100,00 CZK</span>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #212121; border-radius: 6px; margin-bottom: 8px;">
+                    <span>Jan Janovič</span>
+                    <span class="grey-text text-lighten-1">-204 901,00 CZK</span>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background-color: #212121; border-radius: 6px; margin-bottom: 8px;">
+                    <span>Michael Jackson</span>
+                    <span class="grey-text text-lighten-1">-999 999 999 999,00 CZK</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px;">
+                    <button class="btn waves-effect waves-light grey darken-2 white-text" type="button"
+                        style="flex: 1 1 0px; text-transform: none; border-radius: 4px; padding: 0 4px; height: 36px; font-size: 0.85rem; min-width: 0;">
+                        Předchozí
+                    </button>
+
+                    <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+                        style="width: 36px; min-width: 36px; text-transform: none; border-radius: 4px; padding: 0; height: 36px; flex-shrink: 0;">
+                        1
+                    </button>
+                    <button class="btn waves-effect waves-light grey darken-2 white-text" type="button"
+                        style="width: 36px; min-width: 36px; text-transform: none; border-radius: 4px; padding: 0; height: 36px; flex-shrink: 0;">
+                        2
+                    </button>
+                    <button class="btn waves-effect waves-light grey darken-2 white-text" type="button"
+                        style="width: 36px; min-width: 36px; text-transform: none; border-radius: 4px; padding: 0; height: 36px; flex-shrink: 0;">
+                        3
+                    </button>
+
+                    <button class="btn waves-effect waves-light grey darken-2 white-text" type="button"
+                        style="flex: 1 1 0px; text-transform: none; border-radius: 4px; padding: 0 4px; height: 36px; font-size: 0.85rem; min-width: 0;">
+                        Další
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none;">
+
+            <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
+                style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
+                Platba
+            </button>
+
+            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+                style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
+                QR kód
+            </button>
+        </div>
+
+    </main>
+
+    <!-- modal na filtr -->
+    <form id="filter-modal" class="modal bottom-sheet modal-fixed-footer custom-high-modal" style="max-height: 80%;">
+        <div class="modal-content" style="padding: 24px; background-color: #121212;">
+            <h6 class="grey-text text-lighten-1"
+                style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Typ
+                transakce</h6>
+
+            <div style="display: flex; gap: 24px; margin-bottom: 32px;">
+                <label style="display: flex; align-items: center;">
+                    <input class="with-gap" name="transaction_type" type="radio" value="all" checked />
+                    <span class="white-text">Vše</span>
+                </label>
+
+                <label style="display: flex; align-items: center;">
+                    <input class="with-gap" name="transaction_type" type="radio" value="income" />
+                    <span class="white-text">Příjem</span>
+                </label>
+
+                <label style="display: flex; align-items: center;">
+                    <input class="with-gap" name="transaction_type" type="radio" value="expense" />
+                    <span class="white-text">Výdaj</span>
+                </label>
+            </div>
+
+            <h6 class="grey-text text-lighten-1"
+                style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Časové
+                období</h6>
+
+            <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 32px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <span class="grey-text text-lighten-1" style="font-size: 0.85rem;">Od:</span>
+                    <input type="date" name="date_from" class="white-text browser-default"
+                        style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; color-scheme: dark; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <span class="grey-text text-lighten-1" style="font-size: 0.85rem;">Do:</span>
+                    <input type="date" name="date_to" class="white-text browser-default"
+                        style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; color-scheme: dark; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <h6 class="grey-text text-lighten-1"
+                style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Částka
+            </h6>
+
+            <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 32px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <span class="grey-text text-lighten-1" style="font-size: 0.85rem;">Od:</span>
+                    <input type="number" name="amount_from" class="white-text browser-default"
+                        style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <span class="grey-text text-lighten-1" style="font-size: 0.85rem;">Do:</span>
+                    <input type="number" name="amount_to" class="white-text browser-default"
+                        style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <h6 class="grey-text text-lighten-1"
+                style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">
+                Variabilní symbol</h6>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px;">
+                <input type="number" name="variable_symbol" inputmode="numeric" pattern="[0-9]*"
+                    class="white-text browser-default"
+                    style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+            </div>
+
+            <h6 class="grey-text text-lighten-1"
+                style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Číslo
+                účtu odesílatele / příjemce</h6>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+                <input type="text" name="account_number" class="white-text browser-default"
+                    style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 10px; font-family: inherit; font-size: 1rem; width: 100%; box-sizing: border-box;">
+            </div>
+        </div>
+
+        <div class="modal-footer"
+            style="background-color: #1a1a1a; border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 12px 24px; display: flex; justify-content: center; gap: 16px; height: auto;">
+            <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
+                style="width: 150px; text-transform: none; border-radius: 4px;">
+                Filtrovat
+            </button>
+
+            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+                style="width: 150px; text-transform: none; border-radius: 4px;">
+                Zrušit filtry
+            </button>
+        </div>
+    </form>
+
+    <div class="modal-footer"
+        style="background-color: #1a1a1a; border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 12px 24px; display: flex; justify-content: center; gap: 16px; height: auto;">
+        <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
+            style="width: 150px; text-transform: none; border-radius: 4px;">
+            Filtrovat
+        </button>
+
+        <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+            style="width: 150px; text-transform: none; border-radius: 4px;">
+            Zrušit filtry
+        </button>
+    </div>
+    </div>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let elems = document.querySelectorAll('.modal');
+
+            let instances = M.Modal.init(elems, {
+                dismissible: true,
+                startingTop: '100%',
+                endingTop: '25%'
+            });
+        });
+    </script>
+</body>
+</html>

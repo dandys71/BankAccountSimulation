@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <title>AuthManager - Test Front</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <a href="http://localhost:5000/v1/health/ping"><h2>Ping na http://localhost:5000/v1/health/ping</h2></a>
+
+    
+    <h2>Vložení nového uživatele</h2>
+<form id="createForm">
+    <input type="text" id="cusername" placeholder="Uživatelské jméno" required>
+    <input type="text" id="cpassword" placeholder="Heslo" required>
+    <input type="text" id="cdisplayName" placeholder="Skutečné jméno" required>
+    <input type="text" id="cemail" placeholder="Email" required>
+    <input type="text" id="corganizationIds" placeholder="ID organizace" required>
+    <input type="text" id="cinstitutionIds" placeholder="ID instituce" required>
+    <input type="text" id="croles" placeholder="Role" required>
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedVlozeni">
+     Místo pro odpověď.
+    </div>
+<script>
+const createForm = document.getElementById('createForm');
+
+createForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const cusername = document.getElementById('cusername').value;
+    const cpassword = document.getElementById('cpassword').value;
+    const cdisplayName= document.getElementById('cdisplayName').value;
+    const cemail = document.getElementById('cemail').value;
+    const corganizationIds = document.getElementById('corganizationIds').value;
+    const cinstitutionIds = document.getElementById('cinstitutionIds').value;
+    const croles = document.getElementById('croles').value;
+
+    // Odeslání dat pomocí fetch
+    const cresponse = await fetch('http://localhost:5000/v1/users/createUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ 
+            username: cusername, 
+            password: cpassword,
+            displayName: cdisplayName, 
+            email: cemail, 
+            organizationIds: [corganizationIds, corganizationIds], 
+            institutionIds: [cinstitutionIds, cinstitutionIds], 
+            roles: [croles, croles]  
+    }) // Převede objekt na text
+    });
+
+    const cresult = await cresponse.json();
+    console.log(cresult);
+    document.getElementById("odpovedVlozeni").innerHTML = cresult.message + ", Uživatel:" + cresult.user.username;
+});
+</script>
+<br>
+<a href="http://localhost:5000/v1/users/getUserById?userId=12345"><b>Zobrazit jednoho getUserById</b></a>
+
+<h2>Zobrazení všeho</h2>
+<a href="http://localhost:5000/v1/users/listUsers"><b>Zobrazit všechno vedle</b></a><br><br>
+<form id="allForm">
+    <button type="submit">Obnovit / Zobrazit</button>
+</form>
+ <div id="odpovedAll">
+     Místo pro odpověď.
+    </div><br><br>
+<script>
+const allForm = document.getElementById('allForm');
+
+allForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Odeslání dat pomocí fetch
+    const aresponse = await fetch('http://localhost:5000/v1/users/listUsers');
+
+    const aresult = await aresponse.json();
+    let all = "";
+    
+    aresult.forEach((uzivatel) => {
+	  all += (`ID: ${uzivatel.userId}, Uživatel: ${uzivatel.username} , heslo: ${uzivatel.password} <input type="button"
+	  onclick="smazat(this)" id= "${uzivatel.userId}" value="x"> <br>`);
+	});
+    
+    document.getElementById("odpovedAll").innerHTML = all;
+});
+
+async function smazat(tlacitko) {
+   //alert("Smažu uživatele: " + tlacitko.id);
+   // Odeslání dat pomocí fetch
+    const response = await fetch('http://localhost:5000/v1/users/deleteUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ userId: tlacitko.id }) // Převede objekt na text
+    });
+
+    const result = await response.json();
+    console.log(result);
+    document.getElementById("odpovedAll").innerHTML = result.message;
+}
+</script>
+
+<h2>Přihlášení uživatele</h2>
+<form id="loginForm">
+    <input type="text" id="username" placeholder="Uživatelské jméno" required>
+    <input type="password" id="password" placeholder="Heslo" required>
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedPrihlaseni">
+     Místo pro odpověď.
+    </div><br><br>
+<script>
+const loginForm = document.getElementById('loginForm');
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Odeslání dat pomocí fetch
+    const response = await fetch('http://localhost:5000/v1/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ username, password }) //pokud bychom použili httpOnly Cokie ,credentials: 'include'
+    });
+
+    const result = await response.json();
+    localStorage.setItem('accessToken', result.accessToken);
+    console.log(result);
+    document.getElementById("odpovedPrihlaseni").innerHTML = "Token: " + result.accessToken + ", Chyba: " + result.message;
+});
+</script>
+
+<h2>Me</h2>
+<form id="me">
+    <button type="submit">Zobrazit přihlášeného</button>
+</form>
+ <div id="odpovedMe">
+     Místo pro odpověď.
+    </div><br><br>
+<script>
+const me = document.getElementById('me');
+
+
+me.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+    // 1. Vytáhnutí tokenu z localStorage
+    const token = localStorage.getItem('accessToken');
+
+    // Odeslání dat pomocí fetch
+    const aresponse = await fetch('http://localhost:5000/v1/auth/me', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 2. Přidání tokenu do hlavičky Authorization
+            'Authorization': `Bearer ${token}` 
+        }
+    });
+
+    const aresult = await aresponse.json();
+    
+    document.getElementById("odpovedMe").innerHTML = aresult.userResponse.userId + ", " + aresult.userResponse.username + ", " + 
+    aresult.userResponse.displayName + ", Chyba: " + aresult.message;
+});
+</script>
+
+<h2>Založení nové organizace</h2>
+<form id="createOrgForm">
+    <input type="text" id="corgname" placeholder="Název organizace" required>
+    <input type="text" id="corgnote" placeholder="Popis" required>
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedOrgVlozeni">
+     Místo pro odpověď.
+    </div><br><br>
+<script>
+const createOrgForm = document.getElementById('createOrgForm');
+
+createOrgForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const name = document.getElementById('corgname').value;
+    const note = document.getElementById('corgnote').value;
+
+    // Odeslání dat pomocí fetch
+    const cresponse = await fetch('http://localhost:5000/v1/organizations/createOrganization', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ name, note }) // Převede objekt na text
+    });
+
+    const cresult = await cresponse.json();
+    console.log(cresult);
+    document.getElementById("odpovedOrgVlozeni").innerHTML = cresult.message;
+});
+</script>
+
+<h2>Založení nové instituce</h2>
+<form id="createInstForm">
+    <input type="text" id="cinstname" placeholder="Název instituce" required>
+    <input type="text" id="cinstbic" placeholder="SWIFT kód" required>
+    <input type="text" id="cinstcountry" placeholder="země" required>
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedInstVlozeni">
+     Místo pro odpověď.
+    </div><br><br>
+<script>
+const createInstForm = document.getElementById('createInstForm');
+
+createInstForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const name = document.getElementById('cinstname').value;
+    const bic = document.getElementById('cinstbic').value;
+    const country = document.getElementById('cinstcountry').value;
+
+    // Odeslání dat pomocí fetch
+    const cresponse = await fetch('http://localhost:5000/v1/institutions/createInstitution', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ name, bic, country }) // Převede objekt na text
+    });
+
+    const cresult = await cresponse.json();
+    console.log(cresult);
+    document.getElementById("odpovedInstVlozeni").innerHTML = cresult.message;
+});
+</script>
+
+

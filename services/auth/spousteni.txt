@@ -1,0 +1,13 @@
+První spuštění a build v adresáři AuthManager
+docker compose up --build
+
+Další spuštění stačí (pokud se nemění Dockerfile nebo compose.yaml)
+docker compose up
+
+Dále v adresáři AuthManager spustit, pokud by se používala HttpOnly Cookie
+npx serve
+to spustí server na portu 3000, kde můžu otevřít testovací stránku, abych se mohl přihlásit a poslat cookies
+
+Pokud je třeba znova načíst package.json atd., v adresáři AuthManager
+docker compose down
+docker compose up --build

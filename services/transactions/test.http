@@ -1,0 +1,57 @@
+POST http://localhost:5001/v1/transactions/createTransaction
+Content-Type: application/json
+
+{
+  "fromAccountId": "MOJE-ID-123",
+  "toAccountNumber": "PROTIUCET-456",
+  "amount": 500,
+  "currency": "CZK",
+  "vs": "202601",
+  "note": "Prvni uspesny test"
+}
+
+### Test interního převodu (mezi vlastními účty)
+POST http://localhost:5001/v1/transactions/createInternalTransfer
+Content-Type: application/json
+
+{
+  "fromAccountId": "MUJ-HLAVNI-UCET",
+  "toAccountId": "MUJ-SPORICI-UCET",
+  "amount": 2000,
+  "currency": "CZK",
+  "note": "Převod na spoření"
+}
+
+### Test chyby (stejný účet)
+POST http://localhost:5001/v1/transactions/createInternalTransfer
+Content-Type: application/json
+
+{
+  "fromAccountId": "STEJNY-UCET",
+  "toAccountId": "STEJNY-UCET",
+  "amount": 100,
+  "currency": "CZK"
+}
+
+### Test získání detailu transakce
+GET http://localhost:5001/v1/transactions/getTransactionById?transactionId=TXN-123
+
+### Test výpisu transakcí
+GET http://localhost:5001/v1/transactions/listTransactions?accountId=MOJE-ID-123&page=1
+
+### Test vrácení platby (Refund) - ÚSPĚCH
+POST http://localhost:5001/v1/transactions/refundTransaction
+Content-Type: application/json
+
+{
+  "transactionId": "TXN-999-PRO-REFUND",
+  "note": "Vrácení peněz - chybná částka"
+}
+
+### Test chyby v Refundu (Chybějící transactionId)
+POST http://localhost:5001/v1/transactions/refundTransaction
+Content-Type: application/json
+
+{
+  "note": "Tady schválně chybí ID, Zod by měl nadávat"
+}

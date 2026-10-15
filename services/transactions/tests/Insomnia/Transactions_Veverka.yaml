@@ -1,0 +1,257 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: My first collection
+meta:
+  id: wrk_0fa12812e07241cfb03a4ae035184c09
+  created: 1774938735243
+  modified: 1774938735243
+  description: ""
+collection:
+  - url: http://localhost:5001/v1/transactions/createTransaction
+    name: 1. createTransaction
+    meta:
+      id: req_70bf942190a94eddbf158e7ffd844785
+      created: 1774938735366
+      modified: 1774953013129
+      isPrivate: false
+      description: ""
+      sortKey: -1774938735366
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "fromAccountId": "ACC-123",
+          "toAccountNumber": "222333444/0800",
+          "amount": 1000,
+          "currency": "CZK",
+          "note": "Za večeři"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/createInternalTransfer
+    name: 2. createInternalTransfer
+    meta:
+      id: req_4532a1cd281b46eeab842a56944ad37b
+      created: 1774945624678
+      modified: 1774951403709
+      isPrivate: false
+      description: ""
+      sortKey: -1774945624678
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "fromAccountId": "ACC-MAIN",
+          "toAccountId": "ACC-SAVINGS",
+          "amount": 5000,
+          "note": "Spoření"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/getTransactionById?transactionId=TXN-12345
+    name: 3. getTransactionById
+    meta:
+      id: req_c8619d4aad694fe2ab6967c10bad587c
+      created: 1774945781091
+      modified: 1774951465965
+      isPrivate: false
+      description: ""
+      sortKey: -1774945781091
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/listTransactions?accountId=ACC-123&page=1&pageSize=10
+    name: 4. listTransaction
+    meta:
+      id: req_dbea8594bd8a44a4b9f83475bb6fe04e
+      created: 1774946109889
+      modified: 1774951484080
+      isPrivate: false
+      description: ""
+      sortKey: -1774946109889
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/refundTransaction
+    name: 5. refundTransaction
+    meta:
+      id: req_ceafd0651df74abfa10b2afbd920540c
+      created: 1774946364601
+      modified: 1774951512980
+      isPrivate: false
+      description: ""
+      sortKey: -1774946364601
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "transactionId": "TXN-ORIGINAL-ID",
+          "note": "Omylem posláno dvakrát"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/generateStatement
+    name: 6. generateStatement
+    meta:
+      id: req_fab697507b624507948f8cae8fd52e4f
+      created: 1774948056652
+      modified: 1774951540160
+      isPrivate: false
+      description: ""
+      sortKey: -1774948056652
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "accountId": "ACC-123",
+          "dateFrom": "2026-03-01",
+          "dateTo": "2026-03-31",
+          "format": "PDF"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/getPending?accountId=ACC-123
+    name: 7. getPending
+    meta:
+      id: req_9f9297ddfb064da5894a12ff32fc76d0
+      created: 1774949403856
+      modified: 1774951555196
+      isPrivate: false
+      description: ""
+      sortKey: -1774949403856
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/transactions/cancelPending
+    name: 8. cancelPending
+    meta:
+      id: req_4303fdf356ba4590849b6056c9fdedfd
+      created: 1774950025831
+      modified: 1774951573528
+      isPrivate: false
+      description: ""
+      sortKey: -1774950025831
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "transactionId": "TXN-PEND-999"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_438454e72d616f84ac7c43d618142c6514fab6dc
+    created: 1774938735319
+    modified: 1774938735319
+environments:
+  name: Base Environment
+  meta:
+    id: env_438454e72d616f84ac7c43d618142c6514fab6dc
+    created: 1774938735307
+    modified: 1774938735307
+    isPrivate: false

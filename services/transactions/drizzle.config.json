@@ -1,0 +1,8 @@
+{
+  "dialect": "postgresql",
+  "schema": "./src/db/schemas",
+  "out": "./drizzle",
+  "dbCredentials": {
+    "url": "postgres://transaction_user:123456***@db:5432/transaction_manager"
+  }
+}

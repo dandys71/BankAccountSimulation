@@ -1,0 +1,27 @@
+# Spouštějte kořenový docker-compose.yml v BankAccountSimulation, ne tento soubor.
+services:
+  app:
+    build: .
+    container_name: node_authManager
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app          # Připojí tvůj aktuální adresář do /src v kontejneru
+      - /app/node_modules # Zabrání přepsání node_modules v kontejneru těmi lokálními
+    environment:
+      # Připojovací řetězec k MongoDB. 
+      # "mongodb" je název služby definovaný níže.
+      - MONGO_URI=mongodb://db:27017/moje_databaze
+    depends_on:
+      - db
+
+  db:
+    image: mongo:latest
+    container_name: mongodb_authManager
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db # Persistence dat pro MongoDB
+
+volumes:
+  mongo_data: # Definice pojmenovaného volume pro databázi

@@ -1,0 +1,185 @@
+type: collection.insomnia.rest/5.0
+name: TM testy
+meta:
+  id: wrk_1d283baa38f84d09a848a4451f4128c9
+  created: 1774946423826
+  modified: 1774946458292
+  description: ""
+collection:
+  - url: http://localhost:5001/v1/accounts/generateAccountNumber
+    name: v1/accounts/generateAccountNumber
+    meta:
+      id: req_da1c67d3b09b4cca912e6d31d4683431
+      created: 1774941533778
+      modified: 1774946988028
+      isPrivate: false
+      description: ""
+      sortKey: -1774941533778
+    method: POST
+    parameters:
+      - name: ""
+        value: ""
+        disabled: false
+        id: pair_c118c46f1d08431a8dd2d619b06c5c87
+    headers:
+      - name: User-Agent
+        value: insomnia/11.6.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/accounts/getStandingOrders
+    name: v1/accounts/getStandingOrders
+    meta:
+      id: req_98241697169e47b093a432c725fbbe33
+      created: 1774946248636
+      modified: 1774946468990
+      isPrivate: false
+      description: ""
+      sortKey: -1774941533878
+    method: GET
+    parameters:
+      - name: accountId
+        value: "1"
+        disabled: false
+        id: pair_a5bf575b2a0e4cfe8f946fbc7f4794dd
+    headers:
+      - name: User-Agent
+        value: insomnia/11.6.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/accounts/getHistory
+    name: v1/accounts/getHistory
+    meta:
+      id: req_3c1b32ff48c049e78945826de1b92f02
+      created: 1774946492851
+      modified: 1774951107732
+      isPrivate: false
+      description: ""
+      sortKey: -1774941533978
+    method: GET
+    parameters:
+      - name: accountId
+        value: "1"
+        disabled: false
+        id: pair_a5bf575b2a0e4cfe8f946fbc7f4794dd
+      - id: pair_16cca0241135476483c95bd0fdc725b3
+        name: direction
+        value: income
+        description: ""
+        disabled: false
+      - id: pair_f87711513640421cae1bcb0dce9a4120
+        name: amountFrom
+        value: "100"
+        description: ""
+        disabled: false
+      - id: pair_d16986baec314511b9eabe0b0a358897
+        name: amountTo
+        value: "500"
+        description: ""
+        disabled: false
+      - id: pair_1395fcf3185b4c79be9919d6515b0f28
+        name: dateFrom
+        value: 2026-03-01T09:38:49.575Z
+        description: ""
+        disabled: false
+      - id: pair_f24387b41fa04cc4badff1be11f33ea9
+        name: dateTo
+        value: 2026-03-31T09:38:49.575Z
+        description: ""
+        disabled: false
+      - id: pair_d525e282db1940d0b83511d82f7df8d9
+        name: vs
+        value: "0000000000"
+        description: ""
+        disabled: false
+      - id: pair_e6360026cb4c4297bbc4cdca3a2c8ca0
+        name: sender
+        value: 000000000/0100
+        description: ""
+        disabled: false
+      - id: pair_f42e2e2039964ca5bc0178c9b9b540ff
+        name: recipient
+        value: 000000001/0100
+        description: ""
+        disabled: false
+      - id: pair_b86e6228d43d450eaf3a1c23a28c9ab9
+        name: page
+        value: "1"
+        description: ""
+        disabled: false
+      - id: pair_87295de1287e4d5f81ef203b11cf6b18
+        name: pageSize
+        value: "50"
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.6.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/accounts/getQrCode
+    name: v1/accounts/getQrCode
+    meta:
+      id: req_08baee134f5045d59500222f681616e0
+      created: 1774953386411
+      modified: 1774954022637
+      isPrivate: false
+      description: ""
+      sortKey: -1774941533678
+    method: GET
+    parameters:
+      - name: accountId
+        value: 000000000/0100
+        disabled: false
+        id: pair_a5bf575b2a0e4cfe8f946fbc7f4794dd
+      - id: pair_0883bc221fed4966b8486c3800bd9e72
+        name: amount
+        value: "20000000000"
+        description: ""
+        disabled: false
+      - id: pair_bfed13c4a58b43149903390d513b7fbb
+        name: message
+        value: zpráva
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.6.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_72ace6155786439ba87a9d72cbd5d9b6
+    created: 1774941512551
+    modified: 1774941512551
+environments:
+  name: Base Environment
+  meta:
+    id: env_ca097ea79df0406f89f33088058352d3
+    created: 1773321100055
+    modified: 1774941512490
+    isPrivate: false

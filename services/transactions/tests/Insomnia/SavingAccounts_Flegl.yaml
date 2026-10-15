@@ -1,0 +1,334 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: My first collection
+meta:
+  id: wrk_8a2559c822644c358c03cb88a8f333ee
+  created: 1774940140502
+  modified: 1774940140502
+  description: ""
+collection:
+  - url: http://localhost:5001/v1/savingsAccounts/applyInterest
+    name: 11 applyInterest
+    meta:
+      id: req_14b60b3af44b4004ba59c0570235c047
+      created: 1774940140950
+      modified: 1774945059443
+      isPrivate: false
+      description: ""
+      sortKey: -1774940140950
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "institutionId": "bank-001",
+          "accountId": "sa-001",
+          "asOf": "2026-03-21",
+          "mode": "dryRun"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/updateInterestRate
+    name: 10 updateInterestRate
+    meta:
+      id: req_bfcb4ee8740a40109002c28747a63b98
+      created: 1774940939698
+      modified: 1774942750454
+      isPrivate: false
+      description: ""
+      sortKey: -1774940939698
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "sa-001",
+          "interestRate": 2.5
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/getInterestSettings?id=sa-001
+    name: 9 interestSettings
+    meta:
+      id: req_7acc8fd7b41c4b588a60fe4232ddfcda
+      created: 1774940959374
+      modified: 1774945443537
+      isPrivate: false
+      description: ""
+      sortKey: -1774940959374
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/transferToCurrent
+    name: 8 transfertoCurrent
+    meta:
+      id: req_0cb39b29be1241f99cc7a27c03c259ce
+      created: 1774940961706
+      modified: 1774941801893
+      isPrivate: false
+      description: ""
+      sortKey: -1774940961706
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "savingAccountId": "sa-001",
+          "currentAccountId": "ca-001",
+          "amount": 500
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/getHistory?accountid=sa-001
+    name: 7 getHistory
+    meta:
+      id: req_bafedb7fffae46098c192d98d1411e47
+      created: 1774940963663
+      modified: 1774941774744
+      isPrivate: false
+      description: ""
+      sortKey: -1774940963663
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/getBalance?accountid=sa-001
+    name: 6 getBalance
+    meta:
+      id: req_2c0602e1004b4a19a4fa2eef1ad6feaa
+      created: 1774940966053
+      modified: 1774941757565
+      isPrivate: false
+      description: ""
+      sortKey: -1774940966053
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/closeAccount
+    name: 5 closeAccount
+    meta:
+      id: req_8d19f5af7e7848568a0eaedf44456272
+      created: 1774940973093
+      modified: 1774941705369
+      isPrivate: false
+      description: ""
+      sortKey: -1774940973093
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "sa-001"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/updateAccount
+    name: 4 updateAccount
+    meta:
+      id: req_ea97c17a910547fdbe3caf5ed4d5643f
+      created: 1774940976560
+      modified: 1774945595081
+      isPrivate: false
+      description: ""
+      sortKey: -1774940976560
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "id": "sa-001",
+          "balance": 20000,
+          "interestRate": 2.5
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/createAccount
+    name: 3 createAccount
+    meta:
+      id: req_4d77d99e0f424dd69b3132e5063fdd61
+      created: 1774940979673
+      modified: 1774941620180
+      isPrivate: false
+      description: ""
+      sortKey: -1774940979673
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "userId": "u-001",
+          "accountNumber": "123456789",
+          "balance": 15000,
+          "interestRate": 1.8
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/listAccounts
+    name: 2 listAccounts
+    meta:
+      id: req_be25a87a8ef84db9a487e540fd345d9f
+      created: 1774940981861
+      modified: 1774941319788
+      isPrivate: false
+      description: ""
+      sortKey: -1774940981861
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5001/v1/savingsAccounts/getAccountById/sa-001
+    name: 1 GetAccountById
+    meta:
+      id: req_aab78ccc2067417da56d914c79f53b76
+      created: 1774940989188
+      modified: 1774941276909
+      isPrivate: false
+      description: ""
+      sortKey: -1774940989188
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.4.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_9d00e91b60603e6b4be7ec408c37750f9c2b910f
+    created: 1774940140523
+    modified: 1774940140523
+environments:
+  name: Base Environment
+  meta:
+    id: env_9d00e91b60603e6b4be7ec408c37750f9c2b910f
+    created: 1774940140514
+    modified: 1774940140514
+    isPrivate: false

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <title>AuthManager - Test Front</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body style="background-color: rgb(124, 235, 28);">
+    <a href="http://localhost:5000/v1/health/ping" style="margin-right: 40px"><b>Ping</b></a>
+
+    <a href="http://localhost:5000/v1/users/getUserById?userId=12345" style="margin-right: 40px"><b>Zobrazit jednoho getUserById</b></a>
+
+    <a href="http://localhost:5000/v1/users/listUsers" style="margin-right: 40px"><b>Zobrazit všechno vedle</b></a>
+
+    <a href="http://localhost:5000/v1/organizations/listOrganizations" style="margin-right: 40px"><b>Zobrazit organizace</b></a><br>
+
+    <hr style="height: 5px; background: black ">
+
+    <!-- USERS (оставлено как есть) -->
+
+    <h2>Vložení nového uživatele</h2>
+<form id="createForm">
+    <input type="text" id="cusername" placeholder="Uživatelské jméno" required>
+    <input type="text" id="cpassword" placeholder="Heslo" required>
+    <input type="text" id="cdisplayName" placeholder="Skutečné jméno" required>
+    <input type="text" id="cemail" placeholder="Email" required>
+    <input type="text" id="corganizationIds" placeholder="ID organizace">
+    <input type="text" id="cinstitutionIds" placeholder="ID instituce">
+    <input type="text" id="croles" placeholder="Role">
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedVlozeni">
+     
+    </div>
+<script>
+const createForm = document.getElementById('createForm');
+
+createForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const cusername = document.getElementById('cusername').value;
+    const cpassword = document.getElementById('cpassword').value;
+    const cdisplayName= document.getElementById('cdisplayName').value;
+    const cemail = document.getElementById('cemail').value;
+    const corganizationIds = document.getElementById('corganizationIds').value;
+    const cinstitutionIds = document.getElementById('cinstitutionIds').value;
+    const croles = document.getElementById('croles').value;
+
+    // Odeslání dat pomocí fetch
+    const cresponse = await fetch('http://localhost:5000/v1/users/createUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ 
+            username: cusername, 
+            password: cpassword,
+            displayName: cdisplayName, 
+            email: cemail, 
+            organizationIds: [corganizationIds, corganizationIds], 
+            institutionIds: [cinstitutionIds, cinstitutionIds], 
+            roles: [croles, croles]  
+    }) // Převede objekt na text
+    });
+
+    const cresult = await cresponse.json();
+    console.log(cresult);
+    document.getElementById("odpovedVlozeni").innerHTML = cresult.message + ", Uživatel:" + cresult.user.username;
+});
+</script>
+<br>
+
+<h2>Přihlášení uživatele</h2>
+<form id="loginForm">
+    <input type="text" id="username" placeholder="Uživatelské jméno" required>
+    <input type="password" id="password" placeholder="Heslo" required>
+    <button type="submit">Odeslat</button>
+</form>
+ <div id="odpovedPrihlaseni">
+     
+    </div><br><br>
+<script>
+const loginForm = document.getElementById('loginForm');
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Zamezí obnovení stránky
+
+    // Získání hodnot z inputů
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Odeslání dat pomocí fetch
+    const response = await fetch('http://localhost:5000/v1/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' // Zásadní pro to, aby Node.js věděl, že posíláš JSON
+        },
+        body: JSON.stringify({ username, password }) // Převede objekt na text
+    });
+
+    const result = await response.json();
+    console.log(result);
+    document.getElementById("odpovedPrihlaseni").innerHTML = "Token: " + result.token + ", Chyba: " + result.error;
+});
+</script>
+
+
+    <hr style="height: 5px; background: black ">
+
+<!-- ================= ORGANIZATIONS ================= -->
+
+<h2>Založení nové organizace</h2>
+<form id="createOrgForm">
+    <input type="text" id="corgname" placeholder="Název organizace" required>
+    <input type="text" id="corgnote" placeholder="Popis" required>
+    <button type="submit">Odeslat</button>
+</form>
+
+<br>
+
+<div id="odpovedOrgVlozeni"></div>
+
+
+<script>
+createOrgForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:5000/v1/organizations/createOrganization', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: corgname.value, note: corgnote.value })
+    });
+
+    const result = await response.json();
+    odpovedOrgVlozeni.innerHTML = result.message;
+});
+</script>
+
+<br>
+<hr>
+
+<h2>Seznam organizací</h2>
+
+<form id="orgListForm">
+  <button>Zobrazit / Obnovit</button>
+</form>
+
+<br>
+
+<div id="odpovedOrgList"></div>
+
+<script>
+orgListForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const res = await fetch('http://localhost:5000/v1/organizations/listOrganizations');
+  const data = await res.json();
+
+  let html = "";
+
+  data.forEach(org => {
+    html += `ID: ${org._id}, ${org.name}
+    <button onclick="editOrg('${org._id}')">edit</button>
+    <button onclick="deleteOrg('${org._id}')">delete</button><br>`;
+  });
+
+  odpovedOrgList.innerHTML = html;
+});
+
+function editOrg(id) {
+  uorgId.value = id;
+}
+
+async function deleteOrg(id) {
+  if (!confirm("Opravdu smazat organizaci?")) return;
+
+  const res = await fetch('http://localhost:5000/v1/organizations/deleteOrganization', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ organizationId: id })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+
+  orgListForm.dispatchEvent(new Event('submit')); // обновление списка
+}
+</script>
+
+<br>
+<hr>
+
+<h2>Update organizace</h2>
+<form id="updateOrgForm">
+    <input type="text" id="uorgId" placeholder="ID organizace" required>
+    <input type="text" id="uorgName" placeholder="Název" required>
+    <input type="text" id="uorgNote" placeholder="Popis" required>
+    <button type="submit">Upravit</button>
+</form>
+
+<br>
+
+<div id="odpovedOrgUpdate"></div>
+
+<br>
+
+<script>
+updateOrgForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:5000/v1/organizations/updateOrganization', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            organizationId: uorgId.value,
+            name: uorgName.value,
+            note: uorgNote.value
+        })
+    });
+
+    const result = await response.json();
+    odpovedOrgUpdate.innerHTML = result.message;
+});
+
+function editOrg(id) {
+    uorgId.value = id;
+}
+</script>
+
+
+
+<hr>
+
+<h2>Přidat uživatele do organizace</h2>
+
+<form id="addUserToOrgForm">
+    <input type="text" id="addOrgId" placeholder="ID organizace" required>
+    <input type="text" id="addUserId" placeholder="ID uživatele" required>
+
+    <button type="submit">
+        Přidat uživatele
+    </button>
+</form>
+
+<br>
+
+<div id="odpovedAddUserOrg"></div>
+
+<script>
+const addUserToOrgForm = document.getElementById('addUserToOrgForm');
+
+addUserToOrgForm.addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const response = await fetch(
+        'http://localhost:5000/v1/organizations/addUser',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                organizationId: addOrgId.value,
+                userId: addUserId.value
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    console.log(result);
+
+    odpovedAddUserOrg.innerHTML = result.message;
+});
+</script>
+
+<hr>
+
+<h2>Odebrat uživatele z organizace</h2>
+
+<form id="removeUserFromOrgForm">
+    <input type="text" id="removeOrgId" placeholder="ID organizace" required>
+
+    <input type="text" id="removeUserId" placeholder="ID uživatele" required>
+
+    <button type="submit">
+        Odebrat uživatele
+    </button>
+</form>
+
+<br>
+
+<div id="odpovedRemoveUserOrg"></div>
+
+<script>
+const removeUserFromOrgForm = document.getElementById('removeUserFromOrgForm');
+
+removeUserFromOrgForm.addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const response = await fetch(
+        'http://localhost:5000/v1/organizations/removeUser',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                organizationId: removeOrgId.value,
+                userId: removeUserId.value
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    console.log(result);
+
+    odpovedRemoveUserOrg.innerHTML = result.message;
+});
+</script>
+
+    <hr style="height: 5px; background: black ">
+
+<!-- INSTITUTIONS (оставлено как есть) -->
+
+<h2>Založení nové instituce</h2>
+<form id="createInstForm">
+    <input type="text" id="cinstname" placeholder="Název instituce" required>
+    <input type="text" id="cinstbic" placeholder="SWIFT kód" required>
+    <input type="text" id="cinstcountry" placeholder="země" required>
+    <button type="submit">Odeslat</button>
+</form>
+
+<br>
+
+<div id="odpovedInstVlozeni"></div>
+
+<script>
+createInstForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:5000/v1/institutions/createInstitution', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: cinstname.value,
+            bic: cinstbic.value,
+            country: cinstcountry.value
+        })
+    });
+
+    const result = await response.json();
+    odpovedInstVlozeni.innerHTML = result.message;
+});
+</script>
+
+  </body>
+</html>

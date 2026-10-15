@@ -1,0 +1,21 @@
+---
+description: Účel aplikace, hranice služeb a konvence API
+alwaysApply: true
+---
+
+# BankAccountSimulation
+
+Výuková simulace banky. Požadavky jsou ve `docs/original/` a rejstřík v `docs/README.md`. Shrnutí hranic je v `AGENTS.md`.
+
+- `services/auth` (port 5000, MongoDB): uživatelé, organizace, instituce, vydání JWT.
+- `services/transactions` (port 5001, PostgreSQL): účty, transakce, spoření, trvalé příkazy.
+- `apps/web` (port 3000): statické HTML, na API zatím nenapojené.
+
+Databáze neslučovat. Společné tajemství je `JWT_SECRET` z kořenového `.env`. Nová cesta patří do `routes` + `controllers` + `services` a do `src/app.js`, s prefixem `/v1/`.
+
+```js
+// services/auth/src/config/const.js a services/transactions/src/config/const.js
+export const JWT_SECRET = process.env.JWT_SECRET || 'topsecret';
+```
+
+Spouštět jen kořenový `docker compose up --build`. Do `dandys71/AuthManager`, `dandys71/TransactionManager` ani `the-CYCLE-bin/fg-frontend` nepushovat.
