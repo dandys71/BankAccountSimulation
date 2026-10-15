@@ -36,3 +36,9 @@ Zdrojáky jsou do kontejnerů připojené, takže úprava souboru v `services/au
 Po přidání npm balíčku znovu sestavte danou službu (`docker compose up --build auth` nebo `transactions`) a nechte znovu vytvořit její volume `node_modules`, jinak v kontejneru zůstanou staré závislosti.
 
 Původní repozitáře škol se tímto repozitářem nemění. Odkud kód pochází, je v [SOURCES.md](SOURCES.md).
+
+## Větve studentů
+
+Přesné větve z TransactionManageru jsou `transaction-manager/Flégl-Docker`, `transaction-manager/Flégl-Events`, `transaction-manager/Jasa`, `transaction-manager/standingOrderSchema.js` a `transaction-manager/veverka`. Jejich checkout vrátí původní podobu té služby.
+
+Na aktuálním monorepu navíc leží `transactions/standingOrderSchema` a `transactions/Flegl-Docker`.
