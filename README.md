@@ -20,7 +20,7 @@ Přidá remotes `dandys` (BankAccountSimulation), `transaction-manager` a `auth-
 
 ## Spuštění
 
-Potřebujete Docker Desktop.
+Potřebujete Docker Desktop. Podrobný návod pro Windows je v [docs/LOKALNI-PROSTREDI.md](docs/LOKALNI-PROSTREDI.md), nejrychleji: `powershell -ExecutionPolicy Bypass -File scripts\dev-setup.ps1`.
 
 ```bash
 copy .env.example .env

@@ -4,11 +4,13 @@ Aplikace učí finanční gramotnost na simulaci banky. Student vidí běžný a
 
 Před změnou chování čtěte [docs/README.md](docs/README.md) a soubory ve `docs/original/`. To jsou zadání, ne vygenerované poznámky.
 
+Co zbývá udělat, je v [docs/TODO.md](docs/TODO.md) (body s ID, bezpečnost `SEC-*` má přednost). Hotový bod odškrtněte ve stejném PR. Nejasnosti v zadání patří do [docs/OTAZKY.md](docs/OTAZKY.md), ne do domněnek v kódu.
+
 ## Služby
 
 - `services/auth` — AuthManager, Express, MongoDB, port 5000. Kolekce User, Organization, Institution. Cesty: `/v1/auth`, `/v1/users`, `/v1/organizations`, `/v1/institutions`, `/v1/health/ping`. Seed: `npm run seed` (`admin`/`student`, heslo `heslo123`).
 - `services/transactions` — TransactionManager, Express, PostgreSQL 16 a Drizzle, port 5001. Schémata ve `src/db/schemas/` podle `FG_Entity_DB`: `accounts`, `savings_accounts`, `transactions`, `payments`, `templates`, `standing_orders`, `fates`, `interest_rate_bands`, `simulation_settings`, `account_counters`. Migrace při startu. Cesty: `/v1/accounts`, `/v1/transactions`, `/v1/savingsAccounts`, `/v1/standingOrders`, `/v1/users`, `/v1/health/ping`. Seed: `npm run seed`.
-- `apps/web` — statické HTML (Materialize). Obrazovky `login.html`, `main.html`, `details.html`, `pay-1.html`, `pay-2.html`. Na API se ještě nenapojuje.
+- `apps/web` — statické HTML (Materialize). Obrazovky `login.html`, `main.html`, `details.html`, `pay-1.html`, `pay-2.html`. Volá API přes nginx proxy (`/api/auth`, `/api/transactions`, `js/api.js`).
 
 Každá služba má vlastní databázi. Auth zůstává na MongoDB, transakce na PostgreSQL. Databáze neslučovat.
 

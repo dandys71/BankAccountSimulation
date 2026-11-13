@@ -9,7 +9,9 @@ Výuková simulace banky. Požadavky jsou ve `docs/original/` a rejstřík v `do
 
 - `services/auth` (port 5000, MongoDB): uživatelé, organizace, instituce, vydání JWT.
 - `services/transactions` (port 5001, PostgreSQL): účty, transakce, spoření, trvalé příkazy.
-- `apps/web` (port 3000): statické HTML, na API zatím nenapojené.
+- `apps/web` (port 3000): statické HTML, volá API přes nginx proxy.
+
+Úkoly a bezpečnostní nálezy jsou v `docs/TODO.md` (ID bodu uvádějte v PR), otevřené otázky v `docs/OTAZKY.md`.
 
 Databáze neslučovat. Společné tajemství je `JWT_SECRET` z kořenového `.env`. Nová cesta patří do `routes` + `controllers` + `services` a do `src/app.js`, s prefixem `/v1/`.
 

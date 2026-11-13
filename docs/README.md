@@ -1,5 +1,12 @@
 # Dokumentace produktu
 
+## Pracovní dokumenty
+
+- [TODO.md](TODO.md) — co je hotové, co zbývá, bezpečnostní nálezy (P0 opravit jako první).
+- [OTAZKY.md](OTAZKY.md) — otevřené otázky na zadavatele. Odpovědi se pak přenesou sem a do TODO.
+- [LOKALNI-PROSTREDI.md](LOKALNI-PROSTREDI.md) — jak aplikaci spustit na vlastním PC.
+- [HOSTING.md](HOSTING.md) — požadavky na server a varianty hostingu v ČR i zdarma na test.
+
 Složka `original/` obsahuje zadání tak, jak vzniklo. Ber ji jako zdroj požadavků. Tento soubor je jen rejstřík, aby šlo zadání najít bez otevírání Wordu.
 
 ## Originály
@@ -15,7 +22,7 @@ Složka `original/` obsahuje zadání tak, jak vzniklo. Ber ji jako zdroj požad
 
 Student pracuje s fiktivní bankou: vidí běžný a spořicí účet, zůstatek, historii a zadá platbu (částka, účty, variabilní, specifický a konstantní symbol, komentář, poznámka). Trvalé příkazy spravuje instituce, ne klient. Spořicí účet má úrokovou sazbu podle výše vkladu. Aplikace má fiktivní čas, který může obsluha zrychlit, a v něm běží výplaty a trvalé příkazy.
 
-Role v zadání jsou `SYSTEM`, `SYSTEM_ADMIN` a `USER`. Frontend má klientskou část, operátorskou část a administraci. Dnešní HTML pokrývá přihlášení, přehled účtů, detail a dvě obrazovky platby a na API ještě není napojené.
+Role v zadání jsou `SYSTEM`, `SYSTEM_ADMIN` a `USER`. Frontend má klientskou část, operátorskou část a administraci. Dnešní HTML pokrývá přihlášení, přehled účtů, detail a dvě obrazovky platby (klientská část) a volá API přes nginx proxy. Operátorská a administrátorská část zatím chybí.
 
 ## Hranice kódu
 
