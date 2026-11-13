@@ -1,79 +1,124 @@
 # Podklady k doplnění — ekonomická část
 
-Ve výukové aplikaci simulujeme banku. Studenti SOU jsou klienti s běžným a spořicím účtem, studenti OA obsluhují instituce (pojišťovna, energie, obchod…). Hra trvá **několik hodin** na jedné akci, ve **zrychleném fiktivním čase**: jeden měsíc trvá zhruba 15–20 minut. Částky jsou v **celých korunách**.
+## O co jde
 
-Potřebujeme vědět, jak se má aplikace v následujících situacích chovat. Ideálně „jako ve skutečnosti“, ale zjednodušeně tak, aby to studenti za pár hodin pochopili. Odpovědět stačí volným textem. Pokud u některé otázky existuje víc rozumných variant, napište, kterou chcete.
+Ve výukové aplikaci simulujeme banku:
+
+- **Studenti SOU** jsou klienti. Mají běžný a spořicí účet, vidí zůstatek a historii a posílají platby.
+- **Studenti OA** obsluhují instituce (banka, pojišťovna, energie, obchod…). Sjednávají klientům produkty (půjčka, pojištění) a zadávají jim trvalé příkazy.
+- **Vyučující** řídí hru: spouští a pozastavuje čas, nastavuje mzdu a zakládá studenty.
+
+Hra je **jednorázová akce na několik hodin**. Studenti přijedou na školu, dostanou přihlašovací údaje (`student01`, `student02`…), hrají a na konci se hra vyhodnotí. Čas ve hře běží **zrychleně**: jeden měsíc trvá zhruba 15–20 minut, takže se za odpoledne „prožije“ zhruba rok. Částky jsou v **celých korunách**.
+
+Pro programátory a AI potřebujeme vědět, jak se má aplikace v situacích níže chovat. Ideálně **jako ve skutečnosti**, ale zjednodušeně tak, aby to studenti za pár hodin pochopili. Odpovědět stačí volným textem pod otázkou. Pokud existuje víc rozumných variant, vyberte jednu, nebo napište, ať je to nastavitelné.
+
+Co je už rozhodnuté (pro kontext):
+
+- Každá škola má svůj fiktivní čas. Studenti různých škol si peníze neposílají.
+- Mzda chodí jednou za **fiktivní** měsíc.
+- Platbu může vrátit instituce i příjemce, vyučující jen výjimečně.
+- Vyučující smí ručně změnit zůstatek. Změna se standardně zapíše do historie.
+
+---
 
 ## Otevřené otázky
 
-**Účty a platby**
+### Účty a platby
 
-1. *(ot. 7)* **Může běžný účet jít do mínusu (kontokorent)?** A co se má stát, když na trvalý příkaz, splátku nebo nečekaný výdaj (osud) nejsou peníze? Platba se zamítne, odloží, nebo vznikne dluh či pokuta (jaká)?
-2. *(ot. 8)* **Jaké účty student na začátku dostane?** Jen běžný, nebo běžný i spořicí? Může si během hry založit další? S jakým **počátečním zůstatkem** začíná?
-3. *(ot. 9)* **Jedna banka, nebo víc bank?** Pokud víc, liší se produkty (úroky, poplatky)? A co platba na číslo účtu, které ve hře neexistuje: zamítnout, nebo „odeslat ven“?
-4. *(ot. 10)* **Formát čísla účtu:** mají čísla splňovat skutečný kontrolní součet ČNB (aby studenti viděli reálný formát), nebo stačí smyšlené číslo?
+**1. Může běžný účet jít do mínusu?** *(v seznamu otázek č. 7)*
+Co se má stát, když na platbu nejsou peníze? Týká se to trvalého příkazu (nájem), splátky půjčky i nečekaného výdaje (osud). Možnosti, mezi kterými volíme:
 
-**Spořicí účet**
+- a) platba se **zamítne** a student o ni přijde (nájem nezaplacen, žádný následek),
+- b) platba se zamítne a naúčtuje se **poplatek nebo upomínka**,
+- c) účet jde **do mínusu** (povolený kontokorent do určité výše, s úrokem?),
+- d) vznikne **dluh**, který se strhne z příští výplaty,
+- e) něco jiného.
 
-5. *(ot. 13)* **Úrokové sazby podle výše vkladu:** jaké hranice a sazby? Teď je v aplikaci pro ukázku 0–19 999 Kč za 2,5 %, 20 000–99 999 Kč za 1,8 % a od 100 000 Kč za 1,2 %. Platí sazba **pro celý zůstatek**, nebo **po částech** (do 20 000 Kč jedna sazba, nad ni jiná)?
-6. *(ot. 14)* **Připisování úroku:** jak často (např. měsíčně ve fiktivním čase) a kam? Vždy na spořicí účet, nebo si student může zvolit běžný?
-7. *(ot. 15)* **Může vyučující sazby během hry měnit?** Má být víc typů spořicích účtů?
-8. *(ot. 16)* **Zdanění úroku** (15% srážková daň): ano, nebo pro jednoduchost ne?
+Platí totéž pro jednorázovou platbu, kterou zadá student sám? (Tam ji teď aplikace zamítne.)
 
-**Mzda**
+**2. Jaké účty student na začátku dostane a s jakým zůstatkem?** *(č. 8)*
 
-9. *(ot. 18)* **Výše mzdy:** stejná pro všechny, nebo podle „povolání“, které student dostane? **Kdo je odesílatel** (fiktivní zaměstnavatel)? *Už rozhodnuto: mzda chodí jednou za fiktivní měsíc.*
+- Jen běžný účet, nebo běžný i spořicí?
+- Může si během hry založit další účet (třeba druhý spořicí)?
+- Jaký je **počáteční zůstatek**? Nulový a první je až výplata, nebo nějaká „startovní“ částka?
 
-**Čas**
+**3. Jedna banka, nebo víc bank?** *(č. 9)*
+Teď je ve hře jedna banka (kód 0100).
 
-10. *(ot. 20)* **Posun času skokem:** když vyučující posune čas třeba o 3 měsíce dopředu, mají se zpětně provést všechny zmeškané výplaty a platby (3 výplaty, 3 nájmy), jen jedna, nebo žádná? *(Na tuhle se ptá zadavatel. Předpoklad je, že se skákat nebude.)*
+- Má být víc bank s různými produkty a podmínkami (úroky, poplatky), aby studenti mohli porovnávat?
+- Co s platbou na číslo účtu, které ve hře neexistuje? Zamítnout („účet neexistuje“), nebo ji „odeslat ven“, kdy peníze odejdou a nikomu nepřijdou?
 
-**Produkty a události**
+**4. Má číslo účtu vypadat jako skutečné?** *(č. 10)*
+Česká čísla účtů mají kontrolní součet podle ČNB. Má ho aplikace dodržovat, aby studenti viděli reálný formát (a překlep v čísle se odhalil)? Nebo stačí smyšlené číslo ve tvaru `123456789/0100`?
 
-11. *(ot. 22)* **Půjčka:** stačí „dostanu jednorázově X Kč a pak splácím pevnou splátku“, nebo i úrok, RPSN a předčasné splacení? **Investice a Bitcoin:** patří do letošního rozsahu?
-12. *(ot. 23)* **Osud** (nečekaná událost: rozbitá pračka, výhra v loterii…): jak často a komu se má spouštět? Náhodně všem, náhodně jednotlivcům, nebo ručně vyučujícím? Může osud stáhnout víc, než má student na účtu?
+### Spořicí účet
 
-## Úkol: instituce, šablony a osudy
+**5. Jaké jsou úrokové sazby podle výše vkladu?** *(č. 13)*
+Zadání říká, že čím větší částka, tím menší sazba, a uvádí 2–3 pásma. Pro ukázku je teď v aplikaci:
 
-*(ot. 21)* Aplikace potřebuje „katalog“, se kterým hra začne. Prosím připravte ho v tabulce (Excel nebo Google Sheets, tři listy). Do formátu pro import (JSON) ho pak převedeme my. Pokud něco nevíte, buňku nechte prázdnou nebo do ní napište otázku.
+| Zůstatek | Sazba p. a. |
+| --- | --- |
+| 0 – 19 999 Kč | 2,5 % |
+| 20 000 – 99 999 Kč | 1,8 % |
+| od 100 000 Kč | 1,2 % |
 
-### List 1 — Instituce
+- Jaké hranice a sazby chcete?
+- Platí sazba **pro celý zůstatek** (kdo má 50 000 Kč, má 1,8 % ze všeho)? Nebo **po částech**, jak to dělají skutečné banky (prvních 20 000 Kč za 2,5 %, zbytek za 1,8 %)?
 
-Firmy a úřady, které ve hře vystupují a které obsluhují studenti OA.
+**6. Jak často a kam se připisuje úrok?** *(č. 14)*
 
-| Sloupec | Význam | Příklad |
-| --- | --- | --- |
-| Název | jak se instituce jmenuje ve hře | Pojišťovna Jistota |
-| Typ | banka / pojišťovna / energie / bydlení / obchod / zaměstnavatel / úřad / jiné | pojišťovna |
-| Krátký popis | jedna věta pro studenty | Povinné ručení a pojištění domácnosti |
-| Obsluhuje student OA? | ano = má operátora; ne = běží automaticky | ano |
+- Měsíčně ve fiktivním čase (tedy každých zhruba 15–20 minut), čtvrtletně, nebo jinak?
+- Vždy na spořicí účet, nebo si student může zvolit převod na běžný účet?
 
-### List 2 — Šablony plateb (produkty institucí)
+**7. Může vyučující měnit sazby během hry?** *(č. 15)*
+Například „ČNB zvedla sazby“ jako událost. A má být víc typů spořicích účtů (bez výpovědní lhůty, s výpovědní lhůtou a vyšším úrokem, termínovaný vklad)?
 
-Jedna šablona je jeden produkt, který může mít **víc plateb**. Například půjčka má jednorázový příjem a pravidelnou splátku. Každá platba šablony je na samostatném řádku a řádky jedné šablony mají stejný název šablony.
+**8. Zdaňuje se úrok?** *(č. 16)*
+Ve skutečnosti banka strhne 15% srážkovou daň. Chcete to ve hře mít (studenti vidí hrubý úrok a daň), nebo pro jednoduchost ne?
 
-| Sloupec | Význam | Příklad (2 řádky = 1 šablona) |
-| --- | --- | --- |
-| Instituce | název z listu 1 | Banka Hvězda / Banka Hvězda |
-| Název šablony | produkt | Spotřebitelská půjčka 50 000 / Spotřebitelská půjčka 50 000 |
-| Příjem / výdaj | z pohledu studenta | příjem / výdaj |
-| Typ částky | pevná / náhodná (rozmezí) | pevná / pevná |
-| Částka (Kč) | jen u pevné | 50 000 / 2 300 |
-| Min – max (Kč) | jen u náhodné, např. elektřina | — / — |
-| Interval | jednorázově / denně / týdně / měsíčně / čtvrtletně / pololetně / ročně | jednorázově / měsíčně |
-| První platba | ihned / od dalšího období | ihned / od dalšího období |
-| Konec | bez konce / počet plateb / do data | — / 24 plateb |
-| Text pro studenta | komentář v historii plateb | Půjčka / Splátka půjčky |
-| Kdo ho dostane | **všichni na začátku hry** (nájem, energie) / **jen kdo si ho sjedná** u operátora (půjčka, pojištění) | jen kdo si sjedná |
+### Mzda
 
-### List 3 — Osudy (nečekané události)
+**9. Jaká je mzda a kdo ji posílá?** *(č. 18)*
 
-| Sloupec | Význam | Příklad |
-| --- | --- | --- |
-| Název | krátce | Rozbitá pračka |
-| Popis pro studenta | co se stalo | Rozbila se ti pračka, musíš koupit novou. |
-| Příjem / výdaj | | výdaj |
-| Částka | pevná, nebo rozmezí min – max | 6 000 – 12 000 |
-| Jak často / komu | souvisí s otázkou 12 výše | 1× za hru náhodně ~20 % studentů |
+- Stejná pro všechny, nebo podle „povolání“, které student na začátku dostane (třeba kuchař, mechanik, prodavač)?
+- Kdo je v historii plateb uveden jako odesílatel? Fiktivní zaměstnavatel (jméno, číslo účtu)?
+- Má být mzda hrubá a čistá (odvody, daň), nebo jen čistá částka?
 
-Vedle toho prosím uveďte **výchozí hodnoty hry**: počáteční zůstatky (otázka 2), výši mzdy (otázka 9) a délku fiktivního měsíce v minutách (zadání uvádí 15–20 minut).
+### Čas
+
+**10. Co se stane při skoku v čase?** *(č. 20; na tuto otázku se ptá zadavatel)*
+Když vyučující posune kalendář třeba o 3 měsíce dopředu, má aplikace zpětně provést všechno zmeškané (3 výplaty, 3 nájmy, 3 splátky)? Nebo jen jedno kolo, nebo nic a pokračovat od nového data? Předpoklad je, že se v čase skákat nebude.
+
+### Produkty a události
+
+**11. Jak má fungovat půjčka? Patří do hry investice?** *(č. 22)*
+
+- Stačí jednoduchá podoba „dostanu jednorázově X Kč a pak splácím pevnou splátku N měsíců“?
+- Nebo i úrok, RPSN, poplatek za sjednání, předčasné splacení a sankce za nesplácení?
+- Investice (fondy, akcie) a Bitcoin zadání zmiňuje. Patří do letošního rozsahu, nebo až později? Pokud ano, jak se má měnit jejich hodnota (náhodně, podle připraveného „scénáře trhu“)?
+
+**12. Jak má fungovat osud (nečekaná událost)?** *(č. 23)*
+Například rozbitá pračka, oprava auta, narození dítěte nebo výhra v loterii.
+
+- **Kdo ho spouští:** náhodně aplikace, ručně vyučující, nebo obojí?
+- **Komu:** všem najednou (třeba „zdražení energií“), nebo náhodně vybraným jednotlivcům?
+- **Jak často:** třeba 1–2 osudy na studenta za hru?
+- Může osud strhnout víc, než má student na účtu? (Souvisí s otázkou 1.)
+
+---
+
+## Úkol: katalog institucí, šablon a osudů
+
+*(č. 21)* Aplikace potřebuje „katalog“, se kterým hra začne: jaké instituce ve hře jsou, jaké produkty nabízejí a jaké nečekané události mohou nastat.
+
+**Vyplňte prosím přiloženou tabulku [`podklady/katalog-instituci-sablon-osudu.xlsx`](podklady/katalog-instituci-sablon-osudu.xlsx).** Otevře se v Excelu, LibreOffice i v Google Sheets (Soubor → Importovat). Do formátu pro aplikaci (JSON) ji pak převedeme my.
+
+Má pět listů:
+
+1. **Návod**: jak tabulku vyplňovat a vysvětlení pojmů.
+2. **Instituce**: firmy a úřady ve hře. U každé název, typ, krátký popis a jestli ji obsluhuje student OA.
+3. **Šablony plateb**: produkty institucí. Jeden řádek je jedna platba. Produkt s více platbami má víc řádků se stejným názvem. Například půjčka má řádek „příjem 50 000 Kč jednorázově“ a řádek „výdaj 2 300 Kč měsíčně, 24×“. U každého produktu vyberte, jestli ho dostanou **všichni na začátku** (nájem, energie), nebo **jen ten, kdo si ho sjedná** u operátora (půjčka, pojištění).
+4. **Osudy**: nečekané události s popisem pro studenta, částkou (pevnou, nebo rozmezím od–do) a tím, jak často a komu nastanou.
+5. **Výchozí hodnoty**: počáteční zůstatky, mzda, odesílatel mzdy, délka fiktivního měsíce a délka hry.
+
+Šedé řádky kurzívou jsou vzor. Vyplňujte žlutá pole. Kde je u buňky šipka, vybírá se ze seznamu. Když něco nevíte, nechte buňku prázdnou nebo napište otázku do sloupce Poznámka.

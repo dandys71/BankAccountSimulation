@@ -63,7 +63,7 @@ Stav (13. 11. 2026): všechny otázky prošel zadavatel. Otevřené zůstávají
 ## E. Šablony, instituce, osud
 
 21. Jaké instituce budou na startu (banka, pojišťovna, energetika, nájem, obchod, …)? Připravíte seznam šablon s částkami, nebo je vymýšlí studenti OA?
-    **Odpověď:** Připraví kolegyně (ekonomická část) — zadání úkolu je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md#úkol-instituce-šablony-a-osudy). Vstupní formát pro import (JSON) připraví vývoj podle jejích podkladů. *(13. 11. 2026)*
+    **Odpověď:** Připraví kolegyně (ekonomická část) do tabulky [podklady/katalog-instituci-sablon-osudu.xlsx](podklady/katalog-instituci-sablon-osudu.xlsx), zadání je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md#úkol-katalog-institucí-šablon-a-osudů). Vstupní formát pro import (JSON) připraví vývoj podle jejích podkladů. *(13. 11. 2026)*
 22. Půjčka: jen jednorázový příjem + pevná splátka, nebo i úrok, RPSN a předčasné splacení? Investice a Bitcoin — je to v rozsahu letošního roku?
     **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 23. Osud: jak často a komu se má spouštět (náhodně všem, náhodně jednotlivcům, ručně vyučujícím)? Může osud stáhnout víc, než má student na účtu?
