@@ -26,10 +26,15 @@ export const getHistoryQuerySchema = z.object({
 export const getStandingOrdersQuerySchema = accountIdQuerySchema;
 
 export const getQrCodeQuerySchema = z.object({
-  accountId: z.string(),
-  amount: z.coerce.number(), // asi tady nema byt optional, jelikoz proc by nekdo posilal zadnou castku?
-  message: z.string().optional()
+  accountId: z.string().min(1),
+  // amount je volitelné — QR může být jen na číslo účtu bez částky
+  amount: z.preprocess(
+    (value) => (value === undefined || value === null || value === "" ? undefined : value),
+    z.coerce.number().positive().optional()
+  ),
+  message: z.string().optional(),
 });
+
 
 export const createAccountBodySchema = z.object({
   userId: z.string(),

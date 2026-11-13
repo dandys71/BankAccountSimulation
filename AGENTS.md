@@ -6,13 +6,15 @@ Před změnou chování čtěte [docs/README.md](docs/README.md) a soubory ve `d
 
 ## Služby
 
-- `services/auth` — AuthManager, Express, MongoDB, port 5000. Vlastní uživatele, organizace, instituce a přihlášení. Cesty: `/v1/auth`, `/v1/users`, `/v1/organizations`, `/v1/institutions`, `/v1/health/ping`.
-- `services/transactions` — TransactionManager, Express, PostgreSQL 16 a Drizzle, port 5001. Vlastní účty, transakce, spořicí účty a trvalé příkazy. Cesty: `/v1/accounts`, `/v1/transactions`, `/v1/savingsAccounts`, `/v1/standingOrders`, `/v1/users`, `/v1/health/ping`.
+- `services/auth` — AuthManager, Express, MongoDB, port 5000. Kolekce User, Organization, Institution. Cesty: `/v1/auth`, `/v1/users`, `/v1/organizations`, `/v1/institutions`, `/v1/health/ping`. Seed: `npm run seed` (`admin`/`student`, heslo `heslo123`).
+- `services/transactions` — TransactionManager, Express, PostgreSQL 16 a Drizzle, port 5001. Schémata ve `src/db/schemas/` podle `FG_Entity_DB`: `accounts`, `savings_accounts`, `transactions`, `payments`, `templates`, `standing_orders`, `fates`, `interest_rate_bands`, `simulation_settings`, `account_counters`. Migrace při startu. Cesty: `/v1/accounts`, `/v1/transactions`, `/v1/savingsAccounts`, `/v1/standingOrders`, `/v1/users`, `/v1/health/ping`. Seed: `npm run seed`.
 - `apps/web` — statické HTML (Materialize). Obrazovky `login.html`, `main.html`, `details.html`, `pay-1.html`, `pay-2.html`. Na API se ještě nenapojuje.
 
 Každá služba má vlastní databázi. Auth zůstává na MongoDB, transakce na PostgreSQL. Databáze neslučovat.
 
-Sdílený kontrakt je `JWT_SECRET` z kořenového `.env`. Obě služby ho čtou v `src/config/const.js`. Auth po přihlášení vydá JWT, TransactionManager si ho má sám ověřit. HTTP volání mezi službami zatím nestavět, dokud na to není konkrétní úkol.
+Sdílený kontrakt je `JWT_SECRET` z kořenového `.env`. Obě služby ho čtou v `src/config/const.js`. Auth po přihlášení vydá JWT (`userId`, `username`, `roles`); TransactionManager ho ověřuje v `authMiddleware` na `/v1/*` (kromě health). Role hlídá `allowRoles` u admin operací (účty, šablony, osudy, čas, výplata). HTTP volání mezi službami zatím nestavět, dokud na to není konkrétní úkol.
+
+TransactionManager navíc běží s jednoduchým cronem (trvalé příkazy dle `nextRunAt`, volitelná výplata dle `simulation_settings`).
 
 ## API
 

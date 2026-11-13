@@ -5,12 +5,14 @@ class InstitutionController {
 
   async createInstitution(req, res, next) {
     try {
-      const { name, bic, country } = req.body;
+      const { name, bic, country, organizationId, adminUserId } = req.body;
 
       const newInstitution = new Institution({
         name,
         bic,
-        country
+        country,
+        organizationId,
+        adminUserId,
       });
 
       await newInstitution.save();

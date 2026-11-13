@@ -8,60 +8,91 @@
     <title>Webová aplikace pro podporu výuky finanční gramotnosti studentů SOU</title>
 </head>
 <body class="blue lighten-2" style="margin: 0; padding: 0; overflow: hidden;">
-    <main
-        style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
-
+    <main style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
         <div style="padding: 24px; background-color: #000000AA; color: #FFFFFF; flex-shrink: 0;">
-            <span style="display: block;">Přihlášen(a) jako <span class="blue-text text-lighten-3">Jan
-                    Novák</span></span>
-            <span style="display: block;">Dnes je <span class="blue-text text-lighten-3">10.1.</span>, čas <span
-                    class="blue-text text-lighten-3">1:01</span></span>
+            <span style="display: block;">Přihlášen(a) jako <span class="blue-text text-lighten-3" data-user-name>…</span></span>
+            <span style="display: block;">Dnes je <span class="blue-text text-lighten-3" data-today-date>…</span>, čas <span
+                    class="blue-text text-lighten-3" data-today-time>…</span></span>
             <br>
-            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+            <button data-logout="true" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                 style="width: 125px; text-transform: none; border-radius: 4px;">
                 Odhlásit se
             </button>
-
             <h5>Provedení jednorázové platby (2/2)</h5>
         </div>
 
-        <form method="POST" action=""
-            style="padding: 0px 24px 110px 24px; background-color: #000000CC; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
-
+        <form id="pay-form" style="padding: 0px 24px 110px 24px; background-color: #000000CC; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
             <div class="input-field" style="margin-bottom: 24px;">
-                <input id="variable_symbol" name="variable_symbol" type="number" class="validate white-text" placeholder="Variabilní symbol" required>
+                <input id="variable_symbol" name="variable_symbol" type="text" class="validate white-text" placeholder="Variabilní symbol">
             </div>
-
             <div class="input-field" style="margin-bottom: 24px;">
-                <input id="constant_symbol" name="constant_symbol" type="number" class="validate white-text" placeholder="Konstantní symbol" required>
+                <input id="constant_symbol" name="constant_symbol" type="text" class="validate white-text" placeholder="Konstantní symbol">
             </div>
-
             <div class="input-field" style="margin-bottom: 24px;">
-                <input id="specific_symbol" name="specific_symbol" type="number" class="validate white-text" placeholder="Specifický symbol" required>
+                <input id="specific_symbol" name="specific_symbol" type="text" class="validate white-text" placeholder="Specifický symbol">
             </div>
 
-            <div id="login-error" class="red-text text-darken-1"
-                style="margin-bottom: 20px; font-size: 0.9rem;">
-                Chyba!!!!!!!! dynamicky vyplnit
-            </div>
+            <div id="pay-error" class="red-text text-lighten-2 hide" style="margin-bottom: 20px; font-size: 0.9rem;"></div>
+            <div id="pay-summary" class="grey-text text-lighten-1" style="margin-bottom: 20px; font-size: 0.9rem;"></div>
 
-            <div
-                style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none; z-index: 10;">
-
-                <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+            <div style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none; z-index: 10;">
+                <button id="btn-cancel" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                     style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                     Zrušit
                 </button>
-
                 <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
                     style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                     Odeslat
                 </button>
             </div>
         </form>
-
     </main>
 
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script>
+        const session = FgApi.requireSession();
+        if (!session) throw new Error("redirect");
+        FgApi.fillUserHeader();
+        FgApi.bindLogoutButtons();
+
+        const draft = FgApi.readPaymentDraft();
+        if (!draft?.fromAccountId) {
+            window.location.href = "main.html";
+            throw new Error("missing draft");
+        }
+
+        document.getElementById("pay-summary").textContent =
+            `Platba ${FgApi.formatMoney(draft.amount, draft.currency)} na ${draft.toAccountNumber}`;
+
+        document.getElementById("btn-cancel").addEventListener("click", () => {
+            window.location.href = `pay-1.html?fromAccountId=${encodeURIComponent(draft.fromAccountId)}`;
+        });
+
+        document.getElementById("pay-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const errorEl = document.getElementById("pay-error");
+            errorEl.classList.add("hide");
+
+            try {
+                await FgApi.createTransaction({
+                    fromAccountId: draft.fromAccountId,
+                    toAccountNumber: draft.toAccountNumber,
+                    amount: Number(draft.amount),
+                    currency: draft.currency || "CZK",
+                    vs: document.getElementById("variable_symbol").value.trim() || undefined,
+                    ks: document.getElementById("constant_symbol").value.trim() || undefined,
+                    ss: document.getElementById("specific_symbol").value.trim() || undefined,
+                    comment: draft.comment || undefined,
+                    note: draft.comment || undefined,
+                });
+                FgApi.clearPaymentDraft();
+                window.location.href = `details.html?accountId=${encodeURIComponent(draft.fromAccountId)}`;
+            } catch (error) {
+                errorEl.textContent = error.message || "Platbu se nepodařilo odeslat.";
+                errorEl.classList.remove("hide");
+            }
+        });
+    </script>
 </body>
 </html>

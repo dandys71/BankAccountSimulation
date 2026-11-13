@@ -8,50 +8,46 @@
     <title>Webová aplikace pro podporu výuky finanční gramotnosti studentů SOU</title>
 </head>
 <body class="blue lighten-2" style="margin: 0; padding: 0; overflow: hidden;">
-    <main
-        style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
-
+    <main style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
         <div style="padding: 24px; background-color: #000000AA; color: #FFFFFF; flex-shrink: 0;">
-            <span style="display: block;">Přihlášen(a) jako <span class="blue-text text-lighten-3">Jan
-                    Novák</span></span>
-            <span style="display: block;">Dnes je <span class="blue-text text-lighten-3">10.1.</span>, čas <span
-                    class="blue-text text-lighten-3">1:01</span></span>
+            <span style="display: block;">Přihlášen(a) jako <span class="blue-text text-lighten-3" data-user-name>…</span></span>
+            <span style="display: block;">Dnes je <span class="blue-text text-lighten-3" data-today-date>…</span>, čas <span
+                    class="blue-text text-lighten-3" data-today-time>…</span></span>
             <br>
-            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+            <button data-logout="true" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                 style="width: 125px; text-transform: none; border-radius: 4px;">
                 Odhlásit se
             </button>
-
             <h5>Provedení jednorázové platby (1/2)</h5>
         </div>
 
-        <form method="POST" action=""
-            style="padding: 12px 24px 110px 24px; background-color: #000000CC; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
-
-            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 24px;">
+        <form id="pay-form" style="padding: 12px 24px 110px 24px; background-color: #000000CC; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
                 <div class="input-field" style="margin: 0; flex-grow: 1;">
-                    <input id="account_number" name="account_number" type="number" class="validate white-text" placeholder="Číslo účtu příjemce"
-                        required>
+                    <input id="account_number" name="account_number" type="text" inputmode="numeric"
+                        class="validate white-text" placeholder="Číslo účtu (6–17 číslic)"
+                        required minlength="6" maxlength="17" pattern="[0-9]{6,17}"
+                        title="Číslo účtu musí mít 6 až 17 číslic">
                 </div>
-
                 <span style="font-size: 1.5rem; color: #FFFFFF; padding-top: 4px;">/</span>
-
-                <div class="input-field" style="margin: 0; width: 15%; flex-shrink: 0;">
-                    <input id="bank_code" name="bank_code" type="number" class="validate white-text" placeholder="Kód" required
-                        maxLength="4">
+                <div class="input-field" style="margin: 0; width: 18%; flex-shrink: 0;">
+                    <input id="bank_code" name="bank_code" type="text" inputmode="numeric"
+                        class="validate white-text" placeholder="Kód banky"
+                        required minlength="4" maxlength="4" pattern="[0-9]{4}"
+                        title="Kód banky musí mít přesně 4 číslice" value="0100">
                 </div>
             </div>
+            <p class="grey-text text-lighten-1" style="margin: 0 0 24px 0; font-size: 0.8rem;">
+                Formát: číslo účtu / kód banky (např. 202404001/0100)
+            </p>
 
             <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 24px;">
                 <div class="input-field" style="margin: 0; flex-grow: 1;">
-                    <input id="amount" name="amount" type="number" class="validate white-text" placeholder="Částka" required>
+                    <input id="amount" name="amount" type="number" min="1" step="1" class="validate white-text" placeholder="Částka" required>
                 </div>
-
                 <div class="input-field" style="margin: 0; width: 15%; flex-shrink: 0;">
                     <select id="currency" name="currency" class="browser-default"
-                        style="background-color: transparent; color: #FFFFFF; border: none; border-bottom: 1px solid #9e9e9e; height: 3rem; padding: 0; font-size: 1rem; cursor: pointer; outline: none;">
-                        
-                        <!-- nutno asi pridat vic moznosti -->
+                        style="background-color: transparent; color: #FFFFFF; border: none; border-bottom: 1px solid #9e9e9e; height: 3rem; padding: 0; font-size: 1rem;">
                         <option value="CZK" style="background-color: #333; color: #fff;">CZK</option>
                         <option value="EUR" style="background-color: #333; color: #fff;">EUR</option>
                         <option value="USD" style="background-color: #333; color: #fff;">USD</option>
@@ -60,31 +56,92 @@
             </div>
 
             <div class="input-field" style="margin-bottom: 24px;">
-                <input id="comment" name="comment" type="text" class="validate white-text" placeholder="Komentář" required>
+                <input id="comment" name="comment" type="text" class="validate white-text" placeholder="Komentář">
             </div>
 
-            <div id="login-error" class="red-text text-darken-1"
-                style="margin-bottom: 20px; font-size: 0.9rem;">
-                Chyba!!!!!!!! dynamicky vyplnit
-            </div>
+            <div id="pay-error" class="red-text text-lighten-2 hide" style="margin-bottom: 20px; font-size: 0.9rem;"></div>
 
-            <div
-                style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none; z-index: 10;">
-
-                <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+            <div style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none; z-index: 10;">
+                <button id="btn-cancel" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                     style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                     Zrušit
                 </button>
-
                 <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
                     style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                     Pokračovat
                 </button>
             </div>
         </form>
-
     </main>
 
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script>
+        const session = FgApi.requireSession();
+        if (!session) throw new Error("redirect");
+        FgApi.fillUserHeader();
+        FgApi.bindLogoutButtons();
+
+        const params = new URLSearchParams(window.location.search);
+        const fromAccountId = params.get("fromAccountId");
+        if (!fromAccountId) {
+            window.location.href = "main.html";
+            throw new Error("missing fromAccountId");
+        }
+
+        document.getElementById("btn-cancel").addEventListener("click", () => {
+            FgApi.clearPaymentDraft();
+            window.location.href = `details.html?accountId=${encodeURIComponent(fromAccountId)}`;
+        });
+
+        const accountInput = document.getElementById("account_number");
+        const bankInput = document.getElementById("bank_code");
+
+        // Povolit jen číslice
+        [accountInput, bankInput].forEach((input) => {
+            input.addEventListener("input", () => {
+                input.value = input.value.replace(/\D/g, "");
+            });
+        });
+
+        document.getElementById("pay-form").addEventListener("submit", (event) => {
+            event.preventDefault();
+            const errorEl = document.getElementById("pay-error");
+            errorEl.classList.add("hide");
+
+            const accountNumber = accountInput.value.trim();
+            const bankCode = bankInput.value.trim();
+            const amount = Number(document.getElementById("amount").value);
+            const currency = document.getElementById("currency").value;
+            const comment = document.getElementById("comment").value.trim();
+
+            if (!/^\d{6,17}$/.test(accountNumber)) {
+                errorEl.textContent = "Číslo účtu musí mít 6 až 17 číslic (např. 202404001).";
+                errorEl.classList.remove("hide");
+                accountInput.focus();
+                return;
+            }
+            if (!/^\d{4}$/.test(bankCode)) {
+                errorEl.textContent = "Kód banky musí mít přesně 4 číslice (např. 0100).";
+                errorEl.classList.remove("hide");
+                bankInput.focus();
+                return;
+            }
+            if (!(amount > 0)) {
+                errorEl.textContent = "Zadejte kladnou částku.";
+                errorEl.classList.remove("hide");
+                return;
+            }
+
+            FgApi.savePaymentDraft({
+                fromAccountId,
+                toAccountNumber: `${accountNumber}/${bankCode}`,
+                amount,
+                currency,
+                comment,
+            });
+            window.location.href = "pay-2.html";
+        });
+    </script>
 </body>
 </html>

@@ -1,12 +1,10 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import * as schema from "./schemas/index.js";
 
-//max 10
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
 });
-//fronta - FIFO First In first out
 
-
-
-export const db = drizzle(pool);
+export { pool };
+export const db = drizzle(pool, { schema });

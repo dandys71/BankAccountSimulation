@@ -1,15 +1,21 @@
-const eventTemplates = new Map();
+import { SimulationSettings } from "./simulationSettings.js";
+import { EventTemplates } from "./eventTemplates.js";
 
-//[POST]triggerRandomEvent
-export const createSimulationStatusObject = (days, months) => {
-    const now = new Date();
-    const futureDate = new Date(now.setMonth(now.getMonth() + months));
-    futureDate.setDate(futureDate.getDate() + days);
+export { EventTemplates };
 
-    return {
-        currentSimulationTime: futureDate.toISOString(),
-        shiftedDays: days,
-        shiftedMonths: months,
-        status:"RUNNING"
-    };
-};
+export async function createSimulationStatusObject(days = 0, months = 0) {
+  const current = await SimulationSettings.get();
+  const base = current?.currentSimTime ? new Date(current.currentSimTime) : new Date();
+  const futureDate = new Date(base);
+  futureDate.setMonth(futureDate.getMonth() + Number(months || 0));
+  futureDate.setDate(futureDate.getDate() + Number(days || 0));
+
+  await SimulationSettings.update({ currentSimTime: futureDate });
+
+  return {
+    currentSimulationTime: futureDate.toISOString(),
+    shiftedDays: days,
+    shiftedMonths: months,
+    status: "RUNNING",
+  };
+}

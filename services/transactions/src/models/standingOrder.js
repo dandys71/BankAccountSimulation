@@ -1,80 +1,89 @@
-import crypto from 'crypto';
+import crypto from "crypto";
+import { and, eq } from "drizzle-orm";
+import { db } from "../db/client.js";
+import { standingOrders } from "../db/schemas/index.js";
 
-const _mem = new Map();
+function toDate(value) {
+  if (!value) return null;
+  return value instanceof Date ? value : new Date(value);
+}
 
-        const item = {
-            standingOrderId: "ZkušebníPříkaz",
-            accountId: "a123",
-            templateId: "t123",
-            interval: "monthly",
-            customCron: "123",
-            dayOfMonth: 14,
-            amount: 1000,
-            currency: "czk",
-            nextRunAt: "date",
-            isActive: true,
-        };
+export const StandingOrder = {
+  async create(data) {
+    const standingOrderId = `so_${crypto.randomUUID()}`;
+    const fromAccountId = data.fromAccountId || data.accountId;
+    const item = {
+      standingOrderId,
+      fromAccountId,
+      toAccountId: data.toAccountId || null,
+      toAccountNumber: data.toAccountNumber || data.counterpartyAccount || null,
+      paymentId: data.paymentId || null,
+      templateId: data.templateId || null,
+      accountId: data.accountId || fromAccountId,
+      counterpartyAccount: data.counterpartyAccount || data.toAccountNumber || null,
+      interval: data.interval || null,
+      customCron: data.customCron || null,
+      dayOfMonth: data.dayOfMonth ?? null,
+      amount: data.amount ?? null,
+      currency: data.currency || "CZK",
+      nextRunAt: toDate(data.nextRunAt),
+      isActive: data.isActive ?? true,
+      createdAt: new Date(),
+    };
 
-        _mem.set(item.standingOrderId, item);
+    await db.insert(standingOrders).values(item);
+    return item;
+  },
 
-        export const StandingOrder = {
+  async get(standingOrderId) {
+    const rows = await db
+      .select()
+      .from(standingOrders)
+      .where(eq(standingOrders.standingOrderId, standingOrderId));
+    return rows[0] ?? null;
+  },
 
-            create(data) {
-                const standingOrderId = `so_${crypto.randomUUID()}`;
+  async update(data) {
+    const { standingOrderId, ...rest } = data;
+    if (rest.nextRunAt) rest.nextRunAt = toDate(rest.nextRunAt);
+    if (rest.accountId && !rest.fromAccountId) {
+      rest.fromAccountId = rest.accountId;
+    }
 
-                const item = {
-                    standingOrderId,
-                    accountId: data.accountId,
-                    templateId: data.templateId,
-                    interval: data.interval,
-                    customCron: data.customCron,
-                    dayOfMonth: data.dayOfMonth,
-                    amount: data.amount,
-                    currency: data.currency,
-                    nextRunAt: data.nextRunAt,
-                    isActive: true,
-                };
+    const result = await db
+      .update(standingOrders)
+      .set(rest)
+      .where(eq(standingOrders.standingOrderId, standingOrderId))
+      .returning();
 
-                _mem.set(standingOrderId, item);
-                return item;
+    return result[0] ?? null;
+  },
 
-            },
+  async delete(standingOrderId) {
+    const result = await db
+      .delete(standingOrders)
+      .where(eq(standingOrders.standingOrderId, standingOrderId))
+      .returning();
+    return result[0] ?? null;
+  },
 
-            get(standingOrderId){
-                const result = _mem.get(standingOrderId)
-                if (!result) return null;
-                return result;
-            },
+  async list(filters = {}) {
+    const conditions = [];
+    if (filters.accountId) {
+      conditions.push(eq(standingOrders.accountId, filters.accountId));
+    }
+    if (typeof filters.active !== "undefined") {
+      const active =
+        filters.active === true ||
+        filters.active === "true" ||
+        filters.active === 1 ||
+        filters.active === "1";
+      conditions.push(eq(standingOrders.isActive, active));
+    }
 
-
-            update(data) {
-                const existingItem = _mem.get(data.standingOrderId);
-                if(!existingItem) return null;
-                const updated = {...existingItem, ...data}
-
-                _mem.set(data.standingOrderId, updated);
-                return updated;
-
-            },
-            delete(standingOrderId) {
-                const existing = _mem.get(standingOrderId);
-                if (!existing) return null;
-
-                _mem.delete(standingOrderId);
-                return existing;
-            },
-            list(filters) {
-                let orders = Array.from(_mem.values());
-
-                if (filters.accountId) {
-                    orders = orders.filter(o => o.accountId === filters.accountId);
-                }
-                if (typeof filters.active !== 'undefined') {
-                    orders = orders.filter(o => o.isActive === filters.active);
-                }
-                return orders;
-            }
-        }
-        // Přidej do StandingOrder v models/standingOrder.js
-
-
+    return db
+      .select()
+      .from(standingOrders)
+      .where(conditions.length ? and(...conditions) : undefined);
+  },
+};
