@@ -5,6 +5,7 @@
 - [TODO.md](TODO.md) — co je hotové, co zbývá, bezpečnostní nálezy (P0 opravit jako první).
 - [OTAZKY.md](OTAZKY.md) — otevřené otázky na zadavatele. Odpovědi se pak přenesou sem a do TODO.
 - [LOKALNI-PROSTREDI.md](LOKALNI-PROSTREDI.md) — jak aplikaci spustit na vlastním PC.
+- [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md) — otevřené ekonomické otázky a úkol připravit katalog institucí, šablon a osudů.
 - [HOSTING.md](HOSTING.md) — požadavky na server a varianty hostingu v ČR i zdarma na test.
 
 Složka `original/` obsahuje zadání tak, jak vzniklo. Ber ji jako zdroj požadavků. Tento soubor je jen rejstřík, aby šlo zadání najít bez otevírání Wordu.
@@ -53,6 +54,10 @@ Jeden uživatel má jednu z rolí `OPERATOR`/`CLIENT`. Kdo potřebuje obojí, do
 **Vrácení platby** (otázka 12): smí instituce (u plateb, kde je stranou), příjemce (vrátí přijatou platbu odesílateli) a výjimečně `ORG_ADMIN` u jakékoli platby své školy (podvod). Vrácení je nová protitransakce pro obě strany. Původní platba zůstává v historii.
 
 **Průběh hry** (otázka 17): hra je jednorázová akce na několik hodin. Studenti přijedou, dostanou přihlašovací údaje, hrají a na konci se hra vyhodnotí. Čas se pozastavuje jen ručně (pauza/pokračovat).
+
+**Studenti a data** (otázky 24–26): žádné reálné údaje. Loginy `student01`, `student02`… s jednoduchými hesly vygeneruje systém podle zadaného počtu (k vytištění). Bez importu a bez povinné změny hesla. Student si může nastavit přezdívku a volitelně e-mail pro souhrn po hře. Po hře se data **archivují** a hra se **resetuje** pro další skupinu.
+
+**Technika** (otázky 27–30): frontend zůstává statické HTML + JS (Handlebars není nutné). Zatím běží jedna škola najednou, více škol je výhled (model s `organizationId` zachovat). Hosting (školní server nebo Roští) a doména zatím nejsou priorita. Git: `main` + větev na úkol + pull request.
 
 **Mzda a termíny** (otázky 18–19): mzda chodí **měsíčně ve fiktivním čase**. Všechny termíny (trvalé příkazy, mzda, úroky) se ukládají ve fiktivním čase, takže změna rychlosti nevyžaduje přepočet. Checkbox „přepočet příkazů“ se zatím nedělá.
 

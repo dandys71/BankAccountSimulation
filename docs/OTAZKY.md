@@ -6,7 +6,7 @@ a do `docs/README.md`, aby z nich vycházeli studenti i AI asistenti.
 
 Otázky jsou seřazené podle toho, jak moc blokují další vývoj.
 
-Stav: zodpovězeno 1–6, 11, 12, 17, 19, část 18 (13. 11. 2026), shrnutí je v [README.md](README.md#upřesnění-zadání). Otázky s „nevím“ zůstávají otevřené.
+Stav (13. 11. 2026): všechny otázky prošel zadavatel. Otevřené zůstávají 7, 8, 9, 10, 13, 14, 15, 16, část 18, 20, 21 (úkol), 22, 23 — souhrn pro kolegyni je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md). Shrnutí rozhodnutí je v [README.md](README.md#upřesnění-zadání).
 
 ## A. Role a oprávnění (blokuje bezpečnostní opravy)
 
@@ -63,28 +63,28 @@ Stav: zodpovězeno 1–6, 11, 12, 17, 19, část 18 (13. 11. 2026), shrnutí je 
 ## E. Šablony, instituce, osud
 
 21. Jaké instituce budou na startu (banka, pojišťovna, energetika, nájem, obchod, …)? Připravíte seznam šablon s částkami, nebo je vymýšlí studenti OA?
-    **Odpověď:**
+    **Odpověď:** Připraví kolegyně (ekonomická část) — zadání úkolu je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md#úkol-instituce-šablony-a-osudy). Vstupní formát pro import (JSON) připraví vývoj podle jejích podkladů. *(13. 11. 2026)*
 22. Půjčka: jen jednorázový příjem + pevná splátka, nebo i úrok, RPSN a předčasné splacení? Investice a Bitcoin — je to v rozsahu letošního roku?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 23. Osud: jak často a komu se má spouštět (náhodně všem, náhodně jednotlivcům, ručně vyučujícím)? Může osud stáhnout víc, než má student na účtu?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 
 ## F. Uživatelé a data
 
 24. Bude se pracovat s reálnými jmény studentů a e-maily? (Pokud ano: GDPR — souhlas, kdo je správce, mazání po skončení roku, hosting v EU.) Stačí pseudonymy?
-    **Odpověď:**
+    **Odpověď:** **Pseudonymy.** Loginy obecně `student01`, `student02`… Student si může nastavit přezdívku / zobrazované jméno. E-mail jen volitelně, aby mu po hře přišel souhrn. Žádná reálná jména nejsou potřeba. *(13. 11. 2026)*
 25. Formát hromadného importu uživatelů (CSV sloupce? export z Bakalářů?). Jak se studenti dozví heslo — generuje ho systém, musí ho při prvním přihlášení změnit?
-    **Odpověď:**
+    **Odpověď:** Stačí, když vyučující zadá **počet** a systém vygeneruje účty s **jednoduchými hesly** (k vytištění). Bez importu ze seznamu, bez povinné změny hesla — hra trvá pár hodin, riziko zneužití je malé. *(13. 11. 2026)*
 26. Co se stane s daty na konci školního roku — smazat, archivovat, resetovat hru?
-    **Odpověď:**
+    **Odpověď:** Po hře **archivovat** (výsledky a data zůstanou k nahlédnutí) a pak **resetovat** na novou hru pro další skupinu. *(13. 11. 2026)*
 
 ## G. Technika a provoz
 
 27. Frontend: trvat na Handlebars (zadání), nebo ponechat statické HTML + JS, které už je hotové? Případně jiný framework?
-    **Odpověď:**
+    **Odpověď:** Na Handlebars se netrvá (byla to jen volba kvůli znalosti HTML/CSS; vývoj teď běží přes AI). Doporučení vývoje: **ponechat statické HTML + JS** (bez build kroku, studenti kód přečtou, AI s ním umí), sdílené pomocné funkce v `apps/web/js/` (API, escapování HTML, tabulky, stránkování). Framework (např. Alpine.js) přidat až při konkrétní potřebě. *(13. 11. 2026)*
 28. Kde a kdy poběží ostrý provoz (viz [HOSTING.md](HOSTING.md))? Kdo bude server spravovat po odchodu studentů? Máte k dispozici doménu školy?
-    **Odpověď:**
+    **Odpověď:** Školní server, nebo hosting (např. Roští) — podle nabídky školního správce IT. Doména se pořídí později. Zatím není priorita. *(13. 11. 2026)*
 29. Kolik současně: zadání říká 50 uživatelů — na jednu školu, nebo pro všechny školy dohromady?
-    **Odpověď:**
+    **Odpověď:** Zatím **jedna škola** najednou (jedna skupina). Více škol současně je vize — datový model s `organizationId` zachovat, výkon na to zatím neladit. *(13. 11. 2026)*
 30. Platí ještě větve `production` / `test` / `dev` z `FG_faze_vyvoje.docx` i pro toto monorepo, nebo stačí `main` + větve na úkoly + PR?
-    **Odpověď:**
+    **Odpověď:** Podle doporučení vývoje: `main` + **větev na každý úkol** (ID z TODO v názvu, např. `sec-01-auth-middleware`) + **pull request** s review; `main` chráněná a vždy spustitelná. Větve `production`/`test`/`dev` se v monorepu nepoužívají. *(13. 11. 2026)*

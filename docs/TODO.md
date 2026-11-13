@@ -89,6 +89,10 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] **FUN-23 Ruční změna zůstatku adminem** s checkboxem „Zaznamenat v historii“ (default zapnuto + doporučení). Vždy zapsat do auditního logu (nová tabulka `audit_log`: kdo, kdy, účet, původní a nová hodnota, důvod, viditelné v historii ano/ne). Jen `ORG_ADMIN` / `SYSTEM_ADMIN` vlastní organizace.
 - [ ] **FUN-24 Řízení hry (otázka 17).** Hra trvá několik hodin. Pro `ORG_ADMIN` přidat: **pauza / pokračovat** (ruční), **nová hra / reset** (smazat transakce a příkazy, obnovit zůstatky a čas), **vyhodnocení** (pořadí a přehled studentů: zůstatky, úspory, dluhy, export CSV/PDF). Navazuje na hromadné založení studentů s **tiskem přihlašovacích kartiček**, aby se 30 studentů přihlásilo za pár minut.
 - [ ] **FUN-25 Vrácení platby podle rolí (otázka 12).** Instituce u plateb, kde je stranou; příjemce vrací přijatou platbu; `ORG_ADMIN` výjimečně cokoli ve své škole. Vrácení = nová dvojice transakcí s `relatedTransactionId`, původní se nemění (nahrazuje současné `refund`, viz SEC-05).
+- [ ] **FUN-26 Hromadné generování studentů (otázky 24–25).** `ORG_ADMIN` zadá počet → vzniknou uživatelé `studentNN` s jednoduchými hesly, role `CLIENT`, běžný (a spořicí?) účet; výstup k tisku (kartičky login + heslo). Totéž pro operátory instituce. Nahrazuje „hromadný import ze souboru“ ze zadání.
+- [ ] **FUN-27 Profil studenta.** Přezdívka / zobrazované jméno a volitelný e-mail. Po hře volitelně odeslat souhrn e-mailem (potřebuje SMTP; e-mail po odeslání smazat).
+- [ ] **FUN-28 Archivace a reset hry (otázka 26).** Uložit snapshot hry (výsledky, transakce) jako archiv k nahlédnutí, pak reset pro novou skupinu. Navazuje na FUN-24.
+- [ ] **FUN-29 Import katalogu institucí, šablon a osudů** z podkladů kolegyně (otázka 21, `docs/PRO-KOLEGYNI.md`): navrhnout JSON formát + seed/import skript.
 - [ ] **FUN-03 Fiktivní čas se nepoužívá v transakcích.** `simulatedAt` se plní reálným `new Date()`, ne `simulation_settings.currentSimTime`. Frontend ukazuje reálné datum (`formatNow`). Zadání: „1 rok ≈ 4 h“, tj. `speedFactor` ≈ 2190.
 - [ ] **FUN-04 Cron a fiktivní čas.** `tick` posune čas, ale trvalé příkazy vyhodnocuje se *starým* časem; `nextRunAt` se počítá od `asOf`, ne od původního termínu (posouvání). Výplata běží v reálných minutách a `lastPayrollAt` se po restartu ztratí → rozhodnuto: mzda **měsíčně ve fiktivním čase**, termín další výplaty uložit v DB (`nextPayrollAt`). Pauza času musí zastavit cron (mzdu, příkazy, úroky). Při běhu více instancí poběží cron vícekrát (zámek přes `pg_advisory_lock`).
 - [ ] **FUN-05 Úroky:** pásmové úročení podle `interest_rate_bands` (zadání: větší částka → menší sazba), automatické připisování v cronu (měsíčně ve fiktivním čase), volba připsat na spořicí vs. běžný účet ❓, transakce „Připsaný úrok“ v historii.
@@ -115,7 +119,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] Na všech obrazovkách: přihlášený uživatel, odhlášení, **aktuální fiktivní datum** (z `/v1/time/getCurrentSimTime`).
 - [ ] Jednotné chybové a informační hlášky, stránkování u všech výpisů, tlačítka Uložit/Storno.
 - [ ] Platba: pole kód banky, KS, SS, komentář vs. poznámka (vysvětlit rozdíl studentům).
-- [ ] Rozhodnout technologii ❓ (otázka 27): zadání chce **Handlebars**, teď je statické HTML + Materialize + vanilla JS.
+- [x] Technologie rozhodnuta (otázka 27): **statické HTML + JS**, bez Handlebars. Doplnit sdílené helpery (escapování, tabulka, stránkování) do `apps/web/js/`.
 - [ ] Mobile-first responzivita (otestovat na telefonu), přístupnost.
 - [ ] Token v `localStorage` → zvážit httpOnly cookie (kód je už připravený zakomentovaný v auth).
 
@@ -133,7 +137,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 ### Frontend — administrátor organizace
 - [ ] Globální nastavení: aktuální den, rychlost (1 měsíc = X min), výše a interval mzdy, „přepočet aktuálně zadaných příkazů“ — zatím **nedělat** (termíny jsou ve fiktivním čase, otázka 19), vrátit se po odpovědi na otázku 20.
 - [ ] Instituce: přehled, vytvoření, editace, přiřazení operátora (i s automatickým vytvořením uživatele).
-- [ ] Uživatelé: přehled se zůstatkem, vytvoření, editace, **hromadný import** (CSV ❓), hromadné výpisy.
+- [ ] Uživatelé: přehled se zůstatkem, vytvoření, editace, **generování N studentů** (FUN-26), hromadné výpisy.
 - [ ] Šablony, trvalé příkazy a transakce napříč institucemi.
 - [ ] Osudy: správa a ruční/automatické spouštění.
 
@@ -149,7 +153,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 
 - [ ] Integrační testy proti reálné DB (Postgres v Dockeru / Testcontainers) — hlavně peníze: platba, převod, refund, souběh, trvalý příkaz, úrok.
 - [ ] Testy pro AuthManager (žádné neexistují; `npm test` padá na „No test files found“).
-- [ ] GitHub Actions: `npm ci`, `npm test`, `npm audit` na každý PR.
+- [ ] GitHub Actions: `npm ci`, `npm test`, `npm audit` na každý PR. Chránit `main` (merge jen přes PR) — rozhodnuto v otázce 30.
 - [ ] ESLint + Prettier (teď `lint` jen vypisuje `(lint)`).
 - [x] `.dockerignore` v obou službách (bez něj se na Windows kopíruje lokální `node_modules` do image a nativní `bcrypt` pak nefunguje v Linuxu). Doplněno 13. 11. 2026, zbývá ověřit build na Windows.
 - [ ] Produkční `Dockerfile` (multi-stage, `npm ci --omit=dev`, `USER node`, `CMD node src/app.js`) a `docker-compose.prod.yml` (bez vystavených DB portů, s reverse proxy a HTTPS).
