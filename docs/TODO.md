@@ -61,7 +61,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
   - `savingsAccounts/*` nekontroluje vlastníka vůbec.
   *Oprava:* v service vrstvě vždy porovnat `account.userId === req.user.userId` (výjimka pro role admin/operátor dle instituce). Napsat na to testy.
 - [ ] **SEC-04 Student si může nastavit zůstatek a úrok.** `POST /v1/savingsAccounts/updateAccount` přijme `balance` i `interestRate` od běžného uživatele (ověřeno: zůstatek 9 999 999). `updateInterestRate`, `applyInterest`, `createAccount`, `closeAccount` (spoření) a `accounts/updateAccount`, `accounts/closeAccount` nemají `allowRoles`.
-  *Oprava:* tyto cesty jen pro admin/systém; `balance` nikdy nepřijímat z API, měnit jen přes transakce.
+  *Oprava:* tyto cesty jen pro admin/systém. `balance` nepřijímat z běžných update endpointů; ruční změna zůstatku jen přes dedikovanou admin operaci s auditem (FUN-23).
 - [ ] **SEC-05 Refund a rušení plateb bez oprávnění.** Kdokoli může refundovat jakoukoli transakci; student si takto vrátí vlastní odchozí platbu. Refund interního převodu vrací peníze jen jedné straně (vznikají peníze z ničeho). Zadání: vrácení platby je akce **instituce/admina**.
 - [ ] **SEC-06 Trvalé příkazy může zakládat/měnit/mazat/spouštět student**, i na cizím účtu. Zadání výslovně říká, že klient trvalé příkazy nespravuje. Přidat `allowRoles` + kontrolu instituce. Totéž `templates/createTemplate` (povolena role `USER`).
 - [ ] **SEC-07 Souběh (race condition) → záporný zůstatek.** Kontrola zůstatku a odečtení nejsou v jedné DB transakci. Ověřeno: 20 paralelních plateb po 1000 Kč z účtu s 1000 Kč → zůstatek **−10 000 Kč**. Platí pro platby, převody, spoření, trvalé příkazy, osud, výplatu.
@@ -83,6 +83,10 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 
 - [ ] **FUN-01 Platba na účet v téže bance nepřipíše peníze příjemci** (ověřeno). `createExternal` jen odečte. Pokud `toAccountNumber` patří účtu v DB, vytvořit i příchozí transakci a přičíst. Totéž trvalé příkazy (`runNow`).
 - [ ] **FUN-02 Konzistence zůstatku a transakcí** (zadání: „pozor na konzistenci“). Každá změna zůstatku musí mít transakci a obojí v jedné DB transakci. Teď `adjustBalance` a `insert` běží odděleně.
+- [ ] **FUN-20 Fiktivní čas a mzda per organizace.** Rozhodnuto: každá škola má vlastní čas, rychlost a mzdu. `simulation_settings` má teď jeden globální řádek (`settingsId = 'global'`) → klíč `organizationId`, cron prochází organizace zvlášť, účet musí znát svou organizaci.
+- [ ] **FUN-21 Oddělení organizací.** Platba ani převod nesmí projít mezi účty různých organizací. Volitelný přepínač `SYSTEM_ADMIN` „povolit platby mezi školami“ (default vypnuto, nízká priorita).
+- [ ] **FUN-22 Kód klienta.** Krátký unikátní kód klienta (v rámci organizace), použitelný jako VS; vyhledávání klienta pro operátora podle jména / čísla účtu / kódu, odpověď jen se základními údaji.
+- [ ] **FUN-23 Ruční změna zůstatku adminem** s checkboxem „Zaznamenat v historii“ (default zapnuto + doporučení). Vždy zapsat do auditního logu (nová tabulka `audit_log`: kdo, kdy, účet, původní a nová hodnota, důvod, viditelné v historii ano/ne). Jen `ORG_ADMIN` / `SYSTEM_ADMIN` vlastní organizace.
 - [ ] **FUN-03 Fiktivní čas se nepoužívá v transakcích.** `simulatedAt` se plní reálným `new Date()`, ne `simulation_settings.currentSimTime`. Frontend ukazuje reálné datum (`formatNow`). Zadání: „1 rok ≈ 4 h“, tj. `speedFactor` ≈ 2190.
 - [ ] **FUN-04 Cron a fiktivní čas.** `tick` posune čas, ale trvalé příkazy vyhodnocuje se *starým* časem; `nextRunAt` se počítá od `asOf`, ne od původního termínu (posouvání). Výplata běží v reálných minutách a `lastPayrollAt` se po restartu ztratí. Při běhu více instancí poběží cron vícekrát (zámek přes `pg_advisory_lock`).
 - [ ] **FUN-05 Úroky:** pásmové úročení podle `interest_rate_bands` (zadání: větší částka → menší sazba), automatické připisování v cronu (měsíčně ve fiktivním čase), volba připsat na spořicí vs. běžný účet ❓, transakce „Připsaný úrok“ v historii.
@@ -96,10 +100,10 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] **FUN-13 Výpis do PDF/CSV** (`generateStatement`) — zatím jen zástupný objekt.
 - [ ] **FUN-14 Validace čísla účtu** (mod 11 dle vyhlášky ČNB) a kód banky. Číslo spořicího účtu (`SA-…`) má jiný formát než běžný účet.
 - [ ] **FUN-15 Vazba Auth ↔ Transactions:** založení uživatele v Auth má založit běžný (a spořicí?) účet v Transactions ❓. Teď se účty vytváří jen seedem. (AGENTS.md zatím HTTP volání mezi službami zakazuje — rozhodnout.)
-- [ ] **FUN-16 Role:** sjednotit názvy. Kód míchá `admin`, `boss`, `SYSTEM`, `SYSTEM_ADMIN`, `USER`. Zadání má 3 úrovně (systémový admin, admin organizace, běžný uživatel = klient nebo operátor instituce), ale role `SYSTEM_ADMIN` je v zadání vlastně „admin organizace“? ❓ Definovat tabulku rolí a oprávnění.
+- [ ] **FUN-16 Role:** sjednotit na `SYSTEM_ADMIN`, `ORG_ADMIN`, `OPERATOR`, `CLIENT` + technický aktér `SYSTEM` (rozhodnuto, viz `docs/README.md` → Upřesnění zadání). Kód teď míchá `admin`, `boss`, `SYSTEM`, `SYSTEM_ADMIN`, `USER` — přejmenovat v `allowRoles`, seedu a modelu `User`; doplnit migraci existujících uživatelů. Automatické transakce označovat `performedBy: SYSTEM`.
 - [ ] **FUN-17 Odstranit pozůstatky:** `services/transactions/src/routes/users.js` + `userController.js` (demo login v paměti, 15 min token) — kolize s AuthManagerem. `services/auth/testStrankaAuth*.html`, `spousteni.txt`, `TestyAPI.odt`, staré compose soubory ve službách.
 - [ ] **FUN-18 Dokumentace API:** `TransactionManager_API_v1.html` neodpovídá kódu; `AuthManager_API` chybí úplně. Vygenerovat OpenAPI (např. `zod-to-openapi`) a servírovat přes Swagger UI.
-- [ ] **FUN-19 Peníze jako celá čísla:** rozhodnout, zda jsou částky v Kč nebo haléřích ❓, a sjednotit (DB je `integer`).
+- [ ] **FUN-19 Peníze jako celá čísla:** rozhodnuto — **celé koruny**. DB už je `integer`; zbývá validace `z.number().int()` všude (viz SEC-14) a frontend bez desetinných míst.
 
 ---
 
@@ -109,7 +113,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] Na všech obrazovkách: přihlášený uživatel, odhlášení, **aktuální fiktivní datum** (z `/v1/time/getCurrentSimTime`).
 - [ ] Jednotné chybové a informační hlášky, stránkování u všech výpisů, tlačítka Uložit/Storno.
 - [ ] Platba: pole kód banky, KS, SS, komentář vs. poznámka (vysvětlit rozdíl studentům).
-- [ ] Rozhodnout technologii ❓: zadání chce **Handlebars**, teď je statické HTML + Materialize + vanilla JS.
+- [ ] Rozhodnout technologii ❓ (otázka 27): zadání chce **Handlebars**, teď je statické HTML + Materialize + vanilla JS.
 - [ ] Mobile-first responzivita (otestovat na telefonu), přístupnost.
 - [ ] Token v `localStorage` → zvážit httpOnly cookie (kód je už připravený zakomentovaný v auth).
 

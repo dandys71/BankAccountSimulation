@@ -6,31 +6,33 @@ a do `docs/README.md`, aby z nich vycházeli studenti i AI asistenti.
 
 Otázky jsou seřazené podle toho, jak moc blokují další vývoj.
 
+Stav: zodpovězeno 1–6 (13. 11. 2026), shrnutí je v [README.md](README.md#upřesnění-zadání). Otázky s „nevím“ zůstávají otevřené.
+
 ## A. Role a oprávnění (blokuje bezpečnostní opravy)
 
 1. Kolik je úrovní rolí a jak se jmenují? Zadání popisuje *systémového admina* (jeden na celou aplikaci), *admina organizace* a *běžného uživatele* (klient nebo operátor instituce), ale entita „Účet“ uvádí role `SYSTEM`, `SYSTEM_ADMIN`, `USER`. Je `SYSTEM` technický účet pro cron a `SYSTEM_ADMIN` admin organizace? Navrhuji: `SYSTEM_ADMIN`, `ORG_ADMIN`, `OPERATOR`, `CLIENT`.
-   **Odpověď:**
+   **Odpověď:** Souhlas s rolemi `SYSTEM_ADMIN`, `ORG_ADMIN`, `OPERATOR`, `CLIENT`. Navíc `SYSTEM` = technický aktér pro automatické operace (cron: výplata, trvalé příkazy, úroky, osud). Pod `SYSTEM` se nikdo nepřihlašuje, slouží k označení „kdo operaci provedl“ v historii a auditu. *(13. 11. 2026)*
 2. Může jeden uživatel být zároveň klient (má vlastní účet) i operátor instituce? Student OA má svůj účet, nebo jen spravuje instituci?
-   **Odpověď:**
+   **Odpověď:** Ne. Student OA je jen operátor. Kdyby měl být i klientem, musí mít druhý uživatelský účet (a jiné zařízení). Jeden uživatel = jedna role mimo administrátory. *(13. 11. 2026)*
 3. Co přesně smí operátor instituce: vidět všechny klienty organizace, nebo jen ty, kteří u instituce mají příkaz? Smí klientovi strhnout peníze jednorázově bez souhlasu (např. pokuta, nákup)?
-   **Odpověď:**
+   **Odpověď:** Na rozsahu viditelnosti zadavateli nezáleží, prioritou je **snadné a rychlé ovládání** — operátor si nemá nic zapisovat ručně. Rozhodnutí (návrh vývojáře, odsouhlasit při review): operátor může **vyhledat kteréhokoli klienta své organizace** (jméno, číslo účtu, **kód klienta**), uvidí ale jen základní údaje (jméno, číslo účtu, kód klienta) — ne zůstatek ani historii. Plné údaje a transakce vidí jen u klientů, kteří mají u jeho instituce službu. Každý klient dostane krátký **kód klienta**, který se dá použít jako VS. *(13. 11. 2026)*
 4. Smí vyučující (admin organizace) ručně měnit zůstatky, nebo vše jen přes transakce (opravné platby)?
-   **Odpověď:**
+   **Odpověď:** Ano, admin organizace smí zůstatek přepsat. Ve formuláři je checkbox **„Zaznamenat v historii“**, defaultně zaškrtnutý, s doporučením nechat ho zapnutý (aby změna nebyla pro studenta podezřelá). Pokud ho vypne, změna se v historii klienta neukáže. Implementační poznámka: změna se i tak vždy zapíše do auditního logu viditelného jen adminům, jinak se rozejde zůstatek a součet transakcí. *(13. 11. 2026)*
 5. Jsou organizace (školy) od sebe úplně oddělené — mohou studenti různých škol posílat peníze mezi sebou? Sdílí školy fiktivní čas, nebo má každá vlastní? (Zadání říká „čas v rámci celé aplikace“ i „admin organizace řídí čas“.)
-   **Odpověď:**
+   **Odpověď:** Organizace (školy) jsou **oddělené**: student jedné školy nemůže poslat peníze studentovi jiné školy. Platby mezi školami mohou být **volitelné nastavení systémového admina** (defaultně vypnuto, zatím nízká priorita). **Každá škola má vlastní fiktivní čas** (rychlost i datum), aby se navzájem neovlivňovaly. *(13. 11. 2026)*
 
 ## B. Peníze, účty a platby
 
 6. Jsou částky celé koruny, nebo i haléře?
-   **Odpověď:**
+   **Odpověď:** Stačí **celé koruny**. *(13. 11. 2026)*
 7. Může jít běžný účet do mínusu (kontokorent)? Co se stane, když na trvalý příkaz / osud / splátku nejsou peníze — platba se zamítne, odloží, nebo vznikne dluh/pokuta?
-   **Odpověď:**
+   **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část). Požadavek: ideálně odpovídat skutečnosti.
 8. Kolik účtů má student: přesně jeden běžný a jeden spořicí, nebo si může založit další? Zakládají se automaticky s vytvořením uživatele? Jaký je počáteční zůstatek?
-   **Odpověď:**
+   **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 9. Je v aplikaci jen jedna banka (kód 0100), nebo víc bank? Co s platbou na číslo účtu, které v aplikaci neexistuje — zamítnout, nebo „odeslat ven“ (peníze zmizí)?
-   **Odpověď:**
+   **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 10. Musí čísla účtů splňovat kontrolní součet dle ČNB (modulo 11), aby studenti poznali reálný formát?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 11. Čekající platby se splatností do budoucna — má je klient zadávat sám (plánovaná platba), nebo jde jen o trvalé příkazy instituce?
     **Odpověď:**
 12. Vrácení platby: kdo ho smí provést (operátor, admin, příjemce?) a vrací se celá částka oběma stranám?

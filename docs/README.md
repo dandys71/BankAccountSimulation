@@ -24,6 +24,30 @@ Student pracuje s fiktivní bankou: vidí běžný a spořicí účet, zůstatek
 
 Role v zadání jsou `SYSTEM`, `SYSTEM_ADMIN` a `USER`. Frontend má klientskou část, operátorskou část a administraci. Dnešní HTML pokrývá přihlášení, přehled účtů, detail a dvě obrazovky platby (klientská část) a volá API přes nginx proxy. Operátorská a administrátorská část zatím chybí.
 
+## Upřesnění zadání
+
+Odpovědi zadavatele na [OTAZKY.md](OTAZKY.md). Mají přednost před `original/`, kde si s nimi odporují.
+
+**Role** (otázky 1–2)
+
+| Role | Kdo | Poznámka |
+| --- | --- | --- |
+| `SYSTEM_ADMIN` | správce celé aplikace (jeden) | zakládá organizace a jejich adminy, globální nastavení |
+| `ORG_ADMIN` | vyučující, admin organizace (školy) | čas a mzda své školy, instituce, uživatelé |
+| `OPERATOR` | student OA, spravuje jednu instituci | jen operátor, nemá vlastní bankovní účet |
+| `CLIENT` | student SOU | běžný a spořicí účet |
+| `SYSTEM` | technický aktér, nikdo se pod ním nepřihlašuje | označuje automatické operace (cron: mzda, trvalé příkazy, úroky, osud) v historii a auditu |
+
+Jeden uživatel má jednu z rolí `OPERATOR`/`CLIENT`. Kdo potřebuje obojí, dostane dva účty.
+
+**Operátor a klienti** (otázka 3): priorita je rychlé ovládání bez ručního zapisování. Operátor vyhledá kteréhokoli klienta své organizace podle jména, čísla účtu nebo **kódu klienta** a vidí jen základní údaje (jméno, číslo účtu, kód klienta). Zůstatek a transakce vidí jen u klientů, kteří mají u jeho instituce službu. Kód klienta je krátký identifikátor použitelný jako VS.
+
+**Ruční změna zůstatku** (otázka 4): `ORG_ADMIN` smí zůstatek přepsat. Checkbox „Zaznamenat v historii“ je defaultně zapnutý, s doporučením ho nechat. Když ho vypne, klient změnu v historii nevidí, ale vždy se zapíše do auditního logu pro adminy.
+
+**Oddělení škol** (otázka 5): organizace jsou oddělené, platby mezi školami nejdou. Povolení plateb mezi školami je volitelné nastavení `SYSTEM_ADMIN` (defaultně vypnuto, nízká priorita). **Každá organizace má vlastní fiktivní čas** (datum i rychlost) a vlastní nastavení mzdy.
+
+**Částky** (otázka 6): jen celé koruny.
+
 ## Hranice kódu
 
 - Uživatel, organizace, instituce a vydání JWT: `services/auth`
