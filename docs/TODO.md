@@ -87,8 +87,10 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] **FUN-21 Oddělení organizací.** Platba ani převod nesmí projít mezi účty různých organizací. Volitelný přepínač `SYSTEM_ADMIN` „povolit platby mezi školami“ (default vypnuto, nízká priorita).
 - [ ] **FUN-22 Kód klienta.** Krátký unikátní kód klienta (v rámci organizace), použitelný jako VS; vyhledávání klienta pro operátora podle jména / čísla účtu / kódu, odpověď jen se základními údaji.
 - [ ] **FUN-23 Ruční změna zůstatku adminem** s checkboxem „Zaznamenat v historii“ (default zapnuto + doporučení). Vždy zapsat do auditního logu (nová tabulka `audit_log`: kdo, kdy, účet, původní a nová hodnota, důvod, viditelné v historii ano/ne). Jen `ORG_ADMIN` / `SYSTEM_ADMIN` vlastní organizace.
+- [ ] **FUN-24 Řízení hry (otázka 17).** Hra trvá několik hodin. Pro `ORG_ADMIN` přidat: **pauza / pokračovat** (ruční), **nová hra / reset** (smazat transakce a příkazy, obnovit zůstatky a čas), **vyhodnocení** (pořadí a přehled studentů: zůstatky, úspory, dluhy, export CSV/PDF). Navazuje na hromadné založení studentů s **tiskem přihlašovacích kartiček**, aby se 30 studentů přihlásilo za pár minut.
+- [ ] **FUN-25 Vrácení platby podle rolí (otázka 12).** Instituce u plateb, kde je stranou; příjemce vrací přijatou platbu; `ORG_ADMIN` výjimečně cokoli ve své škole. Vrácení = nová dvojice transakcí s `relatedTransactionId`, původní se nemění (nahrazuje současné `refund`, viz SEC-05).
 - [ ] **FUN-03 Fiktivní čas se nepoužívá v transakcích.** `simulatedAt` se plní reálným `new Date()`, ne `simulation_settings.currentSimTime`. Frontend ukazuje reálné datum (`formatNow`). Zadání: „1 rok ≈ 4 h“, tj. `speedFactor` ≈ 2190.
-- [ ] **FUN-04 Cron a fiktivní čas.** `tick` posune čas, ale trvalé příkazy vyhodnocuje se *starým* časem; `nextRunAt` se počítá od `asOf`, ne od původního termínu (posouvání). Výplata běží v reálných minutách a `lastPayrollAt` se po restartu ztratí. Při běhu více instancí poběží cron vícekrát (zámek přes `pg_advisory_lock`).
+- [ ] **FUN-04 Cron a fiktivní čas.** `tick` posune čas, ale trvalé příkazy vyhodnocuje se *starým* časem; `nextRunAt` se počítá od `asOf`, ne od původního termínu (posouvání). Výplata běží v reálných minutách a `lastPayrollAt` se po restartu ztratí → rozhodnuto: mzda **měsíčně ve fiktivním čase**, termín další výplaty uložit v DB (`nextPayrollAt`). Pauza času musí zastavit cron (mzdu, příkazy, úroky). Při běhu více instancí poběží cron vícekrát (zámek přes `pg_advisory_lock`).
 - [ ] **FUN-05 Úroky:** pásmové úročení podle `interest_rate_bands` (zadání: větší částka → menší sazba), automatické připisování v cronu (měsíčně ve fiktivním čase), volba připsat na spořicí vs. běžný účet ❓, transakce „Připsaný úrok“ v historii.
 - [ ] **FUN-06 Ze spořicího účtu jen na vlastní běžný účet** — `transferToCurrent` nekontroluje, že běžný účet patří stejnému majiteli. Uzavřený spořicí účet jde dál vybírat.
 - [ ] **FUN-07 Trvalé příkazy:** příjem i výdaj (`PRIJEM`/`VYDAJ`), náhodná částka min–max, intervaly ze zadání (jednorázový, denní, týdenní, měsíční, čtvrtletní, pololetní, roční), první platba „ihned / následující období“, konec po datu nebo počtu plateb, VS a komentář. Pole `customCron` je povinné, ale nic nedělá. `previewNextExecutions` ignoruje `windowDays` a vrací vždy 2 položky. Při nedostatku peněz ❓.
@@ -96,7 +98,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] **FUN-09 Výplata:** vyplácet jen klientům (ne operátorům/adminům) a jen v rámci organizace; výše a interval ve fiktivním čase; zdrojový „účet zaměstnavatele“ ❓.
 - [ ] **FUN-10 Osud:** náhodné spouštění „někde v průběhu“ (pravděpodobnost/frekvence ❓), osudy per organizace, příjem i výdaj; co při nedostatku peněz ❓.
 - [ ] **FUN-11 Filtrování a stránkování historie**: příchozí/odchozí, částka od–do, datum od–do, VS, protiúčet. `total` musí být celkový počet (`count(*)`), ne délka stránky.
-- [ ] **FUN-12 Čekající platby (budoucí splatnost)**: `executeImmediately: false` vytvoří PENDING, ale nic ji později neprovede. Přidat datum splatnosti a provádění v cronu.
+- [ ] **FUN-12 Čekající platby (budoucí splatnost)** — rozhodnuto: klient je zadat smí (nízká priorita): `executeImmediately: false` vytvoří PENDING, ale nic ji později neprovede. Přidat datum splatnosti a provádění v cronu.
 - [ ] **FUN-13 Výpis do PDF/CSV** (`generateStatement`) — zatím jen zástupný objekt.
 - [ ] **FUN-14 Validace čísla účtu** (mod 11 dle vyhlášky ČNB) a kód banky. Číslo spořicího účtu (`SA-…`) má jiný formát než běžný účet.
 - [ ] **FUN-15 Vazba Auth ↔ Transactions:** založení uživatele v Auth má založit běžný (a spořicí?) účet v Transactions ❓. Teď se účty vytváří jen seedem. (AGENTS.md zatím HTTP volání mezi službami zakazuje — rozhodnout.)
@@ -129,7 +131,7 @@ Vše níže jsem 13. 11. 2026 ověřil požadavky přes `curl` na lokálně bě�
 - [ ] Jednorázová platba/inkaso od instituce na klienta (prodej, půjčka).
 
 ### Frontend — administrátor organizace
-- [ ] Globální nastavení: aktuální den, rychlost (1 měsíc = X min), výše a interval mzdy, „přepočet aktuálně zadaných příkazů“ ❓.
+- [ ] Globální nastavení: aktuální den, rychlost (1 měsíc = X min), výše a interval mzdy, „přepočet aktuálně zadaných příkazů“ — zatím **nedělat** (termíny jsou ve fiktivním čase, otázka 19), vrátit se po odpovědi na otázku 20.
 - [ ] Instituce: přehled, vytvoření, editace, přiřazení operátora (i s automatickým vytvořením uživatele).
 - [ ] Uživatelé: přehled se zůstatkem, vytvoření, editace, **hromadný import** (CSV ❓), hromadné výpisy.
 - [ ] Šablony, trvalé příkazy a transakce napříč institucemi.

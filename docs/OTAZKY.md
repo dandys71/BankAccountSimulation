@@ -6,7 +6,7 @@ a do `docs/README.md`, aby z nich vycházeli studenti i AI asistenti.
 
 Otázky jsou seřazené podle toho, jak moc blokují další vývoj.
 
-Stav: zodpovězeno 1–6 (13. 11. 2026), shrnutí je v [README.md](README.md#upřesnění-zadání). Otázky s „nevím“ zůstávají otevřené.
+Stav: zodpovězeno 1–6, 11, 12, 17, 19, část 18 (13. 11. 2026), shrnutí je v [README.md](README.md#upřesnění-zadání). Otázky s „nevím“ zůstávají otevřené.
 
 ## A. Role a oprávnění (blokuje bezpečnostní opravy)
 
@@ -34,31 +34,31 @@ Stav: zodpovězeno 1–6 (13. 11. 2026), shrnutí je v [README.md](README.md#up�
 10. Musí čísla účtů splňovat kontrolní součet dle ČNB (modulo 11), aby studenti poznali reálný formát?
     **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 11. Čekající platby se splatností do budoucna — má je klient zadávat sám (plánovaná platba), nebo jde jen o trvalé příkazy instituce?
-    **Odpověď:**
+    **Odpověď:** Umožnit (klient si může zadat platbu se splatností do budoucna), ale nízká priorita — v praxi platby do budoucna většinou zadají instituce trvalým příkazem. *(13. 11. 2026)*
 12. Vrácení platby: kdo ho smí provést (operátor, admin, příjemce?) a vrací se celá částka oběma stranám?
-    **Odpověď:**
+    **Odpověď:** Jako v reálné bance: **instituce** může vrátit platbu (u plateb, kde je stranou), **příjemce** může vrátit přijatou platbu odesílateli, **admin** (`ORG_ADMIN`) má právo vrátit jakoukoli platbu své školy, ale jen výjimečně (podvod). Vrácení = nová protitransakce (obě strany), původní platba zůstává v historii. *(13. 11. 2026)*
 
 ## C. Spořicí účet a úroky
 
 13. Pásma úroků: konkrétní hranice a sazby (seed teď má 0–19 999 Kč 2,5 %, 20 000–99 999 Kč 1,8 %, nad 100 000 Kč 1,2 %). Platí sazba pro celý zůstatek, nebo po částech (jako reálné „pásmové úročení“)?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 14. Jak často se úrok připisuje (měsíčně ve fiktivním čase?) a kam — vždy na spořicí, nebo si student volí běžný účet?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 15. Může vyučující sazby měnit během hry? Má být víc typů spořicích účtů?
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 16. Zdaňuje se úrok (15 % srážková daň)? Pro výuku FG by to dávalo smysl.
-    **Odpověď:**
+    **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 
 ## D. Fiktivní čas, mzda, trvalé příkazy
 
 17. Kdy se čas zastaví? (Mimo vyučovací hodiny, o víkendu, o prázdninách.) Kdo ho spouští a pauzuje?
-    **Odpověď:**
+    **Odpověď:** Hra neběží dlouhodobě: studenti přijedou na školu, dostanou přihlašovací údaje a **několik hodin** hrají, pak se hra vyhodnotí. Pozastavení času jen **ručně** (tlačítko pauza/pokračovat), nic automatického ani podle rozvrhu. *(13. 11. 2026)*
 18. Mzda: stejná pro všechny, nebo podle „povolání“ studenta? Kdo je odesílatel (fiktivní zaměstnavatel)? Chodí měsíčně ve fiktivním čase, nebo „každých X minut“?
-    **Odpověď:**
+    **Odpověď:** Odesílatel a výše mzdy: nevím — zjistí zadavatel / kolegyně. Interval: **měsíčně ve fiktivním čase** (ne v reálných minutách) — pak mzda sama reaguje na pauzu i změnu rychlosti. *(13. 11. 2026)*
 19. „Checkbox na přepočet aktuálně zadaných příkazů“ v nastavení organizace — co přesně se má přepočítat? (Posunout termíny po změně data/rychlosti?)
-    **Odpověď:**
+    **Odpověď:** Ano, jde o posun termínů. Závěr: při **změně rychlosti** přepočet netřeba, pokud jsou termíny uložené ve fiktivním čase (příkaz jen dojde dřív/později). Smysl by měl jen při **změně data** → rozhodnout spolu s otázkou 20. Checkbox zatím neimplementovat. *(13. 11. 2026)*
 20. Pokud se čas posune skokem (např. o 3 měsíce), mají se zpětně provést všechny zmeškané platby a výplaty, nebo jen jedna?
-    **Odpověď:**
+    **Odpověď:** nevím — zadavatel se zeptá. Předpoklad: skákat v čase se nebude. *(13. 11. 2026)*
 
 ## E. Šablony, instituce, osud
 

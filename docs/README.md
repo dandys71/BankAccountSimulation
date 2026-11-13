@@ -48,6 +48,14 @@ Jeden uživatel má jednu z rolí `OPERATOR`/`CLIENT`. Kdo potřebuje obojí, do
 
 **Částky** (otázka 6): jen celé koruny.
 
+**Plánované platby** (otázka 11): klient smí zadat platbu se splatností do budoucna (nízká priorita). Běžně je zadávají instituce trvalým příkazem.
+
+**Vrácení platby** (otázka 12): smí instituce (u plateb, kde je stranou), příjemce (vrátí přijatou platbu odesílateli) a výjimečně `ORG_ADMIN` u jakékoli platby své školy (podvod). Vrácení je nová protitransakce pro obě strany. Původní platba zůstává v historii.
+
+**Průběh hry** (otázka 17): hra je jednorázová akce na několik hodin. Studenti přijedou, dostanou přihlašovací údaje, hrají a na konci se hra vyhodnotí. Čas se pozastavuje jen ručně (pauza/pokračovat).
+
+**Mzda a termíny** (otázky 18–19): mzda chodí **měsíčně ve fiktivním čase**. Všechny termíny (trvalé příkazy, mzda, úroky) se ukládají ve fiktivním čase, takže změna rychlosti nevyžaduje přepočet. Checkbox „přepočet příkazů“ se zatím nedělá.
+
 ## Hranice kódu
 
 - Uživatel, organizace, instituce a vydání JWT: `services/auth`
