@@ -20,9 +20,18 @@ class AuthController {
       if (!valid) return res.status(401).json({ message: "Špatné heslo" });
 
       // Vytvoření JWT tokenu
-      const accessToken = jwt.sign({ username: user.username }, JWT_SECRET, { expiresIn: "15m" });
+      // Delší platnost pro výuku / demo UI (15m bylo moc krátké při vyplňování plateb).
+      const accessToken = jwt.sign(
+        {
+          username: user.username,
+          userId: String(user._id),
+          roles: user.roles || ["USER"],
+        },
+        JWT_SECRET,
+        { expiresIn: "8h" }
+      );
       const refreshToken = crypto.randomBytes(64).toString('hex');
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString();
 
       // zápis refreshTokenu do DB
       const updatedUser = await User.findByIdAndUpdate(

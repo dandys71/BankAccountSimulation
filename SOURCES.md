@@ -2,6 +2,22 @@
 
 Do tohoto repozitáře se soubory zkopírovaly jako snímek. Historie ani větve původních repozitářů se neměnily a nic se do nich nepushovalo.
 
+## Git remotes (dandys71)
+
+Po klonu spusť:
+
+```bash
+bash scripts/add-dandys-remotes.sh
+```
+
+| Remote | URL |
+| --- | --- |
+| `dandys` | https://github.com/dandys71/BankAccountSimulation |
+| `transaction-manager` | https://github.com/dandys71/TransactionManager |
+| `auth-manager` | https://github.com/dandys71/AuthManager |
+
+Hlavní monorepo zdroj je `dandys` (`BankAccountSimulation`). `origin` zůstává Cursor Origin (`renata-erm-kov/github-dir-sync`).
+
 | Část v tomto repozitáři | Původ | Větev | Commit |
 | --- | --- | --- | --- |
 | `services/auth` | https://github.com/dandys71/AuthManager | `main` | `25e5a04e570edf7777ffac35b3964c0419f3d03e` |

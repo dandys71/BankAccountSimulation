@@ -3,13 +3,19 @@ import {z} from 'zod';
 // Validace pro jednorázová platba/převod [POST]
 export const createTransactionBodySchema = z.object({
     fromAccountId: z.string().min(1, "Odesílající účet je povinný"),
-    toAccountNumber: z.string().min(1, "Číslo účtu příjemce je povinné"),
+    toAccountNumber: z
+        .string()
+        .regex(
+            /^\d{6,17}\/\d{4}$/,
+            "Číslo účtu musí být ve formátu 6–17 číslic / 4 číslice kódu banky"
+        ),
     amount: z.number().positive("Částka musí být kladné číslo"),
     currency: z.string().length(3).default('CZK'),
     vs: z.string().optional(),
     ks: z.string().optional(),
     ss: z.string().optional(),
-    note: z.string().optional()
+    note: z.string().optional(),
+    comment: z.string().optional()
 });
 
 

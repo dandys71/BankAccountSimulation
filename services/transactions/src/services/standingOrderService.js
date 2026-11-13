@@ -1,67 +1,100 @@
-import {StandingOrder} from '../models/standingOrder.js';
+import crypto from "crypto";
+import { StandingOrder } from "../models/standingOrder.js";
+import * as TransactionModel from "../models/transactions.js";
+import { Accounts } from "../models/accounts.js";
+import { Payments } from "../models/payments.js";
 
-//export = zpřístupníš proměnnou/funkci z jednoho souboru pro použití v jiném.
-//Normální funkce vrací hodnotu hned.
-//Async funkce vrací Promise (slib), protože dělá něco „na pozadí“ (čeká na síť/DB/časovač).
-//Pokud chceme počkat na výsledek, musíme tam, kde funkci voláme použít před konkrétní funkcí klíčové slovo await
 export async function getStandingOrderById(standingOrderId) {
-    return StandingOrder.get(standingOrderId);
+  return StandingOrder.get(standingOrderId);
+}
 
-}
 export async function updateStandingOrder(standingOrder) {
-    return StandingOrder.update(standingOrder);
+  return StandingOrder.update(standingOrder);
 }
+
 export async function deleteStandingOrder(standingOrderId) {
-    return StandingOrder.delete(standingOrderId);
+  return StandingOrder.delete(standingOrderId);
 }
 
 export async function createStandingOrder(standingOrder) {
-    return StandingOrder.create(standingOrder);
-
+  return StandingOrder.create(standingOrder);
 }
 
 export async function listStandingOrders(filters) {
-    return StandingOrder.list(filters);
+  return StandingOrder.list(filters);
 }
 
 export async function runNow(standingOrderId, asOf) {
-    // 1. Najdeme si ten trvalý příkaz
-    const order = await StandingOrder.get(standingOrderId);
-    if (!order) return null;
+  const order = await StandingOrder.get(standingOrderId);
+  if (!order) return null;
 
-    // 2. Vytvoříme objekt transakce podle toho, co chce Swagger
-    const transaction = {
-        transactionId: `tx_${crypto.randomUUID()}`,
-        accountId: order.accountId,
-        counterpartyAccount: "string", // Tady by normálně byl cílový účet
-        amount: order.amount,
-        currency: order.currency,
-        direction: "outcome", // Trvalý příkaz je většinou odchozí platba
-        status: "pending",
-        vs: "string",
-        ks: "string",
-        ss: "string",
-        note: "Okamžité provedení trvalého příkazu",
-        createdAt: new Date().toISOString(),
-        postedAt: asOf || new Date().toISOString()
-    };
+  const accountId = order.fromAccountId || order.accountId;
+  const account = await Accounts.findById(accountId);
+  if (!account) {
+    const err = new Error("Účet trvalého příkazu neexistuje");
+    err.status = 404;
+    throw err;
+  }
 
-    // V reálné aplikaci bys tady zavolal:
-    // await TransactionService.create(transaction);
+  let amount = order.amount;
+  if (order.paymentId) {
+    const resolved = await Payments.resolveAmount(order.paymentId);
+    if (resolved != null) amount = resolved;
+  }
+  if (amount == null) {
+    const err = new Error("Trvalý příkaz nemá částku ani PlatbaID");
+    err.status = 400;
+    throw err;
+  }
+  if (account.balance < amount) {
+    const err = new Error("Nedostatečný zůstatek pro trvalý příkaz");
+    err.status = 400;
+    throw err;
+  }
 
-    return [transaction]; // Swagger očekává pole
+  const postedAt = asOf ? new Date(asOf) : new Date();
+  const transaction = await TransactionModel.create({
+    transactionId: `tx_${crypto.randomUUID()}`,
+    fromAccountId: accountId,
+    toAccountId: order.toAccountId || null,
+    toAccountNumber: order.toAccountNumber || order.counterpartyAccount || "",
+    accountId,
+    counterpartyAccount: order.counterpartyAccount || order.toAccountNumber || "",
+    amount,
+    currency: order.currency || "CZK",
+    direction: "OUTGOING",
+    status: "COMPLETED",
+    note: "Okamžité provedení trvalého příkazu",
+    postedAt,
+    simulatedAt: postedAt,
+  });
+
+  await Accounts.adjustBalance(accountId, -amount);
+
+  return [transaction];
 }
 
+export async function previewNextExecutions(standingOrderId, windowDays = 60) {
+  const order = await StandingOrder.get(standingOrderId);
+  if (!order) return null;
 
-export async function previewNextExecutions(standingOrderId, windowDays) {
-    const order = await StandingOrder.get(standingOrderId);
-    if (!order) return null;
+  const start = order.nextRunAt ? new Date(order.nextRunAt) : new Date();
+  const items = [];
+  const cursor = new Date(start);
 
-    // Vrátíme prostě dva fixní termíny, aby uživatel něco viděl
-    return {
-        items: [
-            { date: "2026-04-01", expectedAmount: order.amount },
-            { date: "2026-05-01", expectedAmount: order.amount }
-        ]
-    };
+  for (let i = 0; i < 2; i++) {
+    items.push({
+      date: cursor.toISOString().slice(0, 10),
+      expectedAmount: order.amount,
+    });
+    if (order.interval === "weekly") {
+      cursor.setDate(cursor.getDate() + 7);
+    } else if (order.interval === "daily") {
+      cursor.setDate(cursor.getDate() + 1);
+    } else {
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+  }
+
+  return { items, windowDays };
 }

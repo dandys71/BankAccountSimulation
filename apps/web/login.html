@@ -8,8 +8,6 @@
     <title>Webová aplikace pro podporu výuky finanční gramotnosti studentů SOU</title>
 </head>
 <body class="blue lighten-2">
-    <!-- hlavicku bych presunul do jednoho souboru, header.html treba -->
-    <!-- tady u toho ale asi ne -->
     <header>
         <nav class="white z-depth-1">
             <div class="nav-wrapper container">
@@ -21,7 +19,7 @@
             </div>
         </nav>
     </header>
-    
+
     <main class="container">
         <div class="row" style="width: 100%; max-width: 360px; margin-bottom: 0;">
             <div class="col s12">
@@ -29,14 +27,14 @@
                     <h4>Vítejte zpět</h4>
                     <h6>Zde se přihlásíte ke svému účtu</h6>
 
-                    <form action="#" method="POST">
+                    <form id="login-form">
                         <div class="input-field">
-                            <input id="sou-name" type="text" placeholder="Jméno" class="validate" required autocomplete="sou-name">
+                            <input id="sou-name" type="text" placeholder="Jméno" class="validate" required autocomplete="username" value="student">
                         </div>
-    
+
                         <div class="input-field">
                             <input id="sou-password" type="password" placeholder="Heslo" class="validate" required
-                                autocomplete="sou-password">
+                                autocomplete="current-password" value="heslo123">
                         </div>
 
                         <div class="row">
@@ -44,13 +42,12 @@
                                 <a href="#">Zapomenuté heslo?</a>
                             </div>
                         </div>
-    
-                        <!-- "hide" skryva ten text -->
+
                         <div id="login-error" class="red-text text-darken-1 hide"
                             style="margin-bottom: 20px; font-size: 0.9rem;">
                             Zadané jméno či heslo je nesprávné.
                         </div>
-    
+
                         <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
                             style="width: 100%; text-transform: none; border-radius: 4px;">
                             Přihlásit se
@@ -60,7 +57,31 @@
             </div>
         </div>
     </main>
-    
+
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script>
+        if (FgApi.readSession()?.accessToken) {
+            window.location.href = "main.html";
+        }
+
+        document.getElementById("login-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const errorEl = document.getElementById("login-error");
+            errorEl.classList.add("hide");
+            errorEl.textContent = "Zadané jméno či heslo je nesprávné.";
+
+            const username = document.getElementById("sou-name").value.trim();
+            const password = document.getElementById("sou-password").value;
+
+            try {
+                await FgApi.login(username, password);
+                window.location.href = "main.html";
+            } catch (error) {
+                errorEl.textContent = error.message || "Zadané jméno či heslo je nesprávné.";
+                errorEl.classList.remove("hide");
+            }
+        });
+    </script>
 </body>
 </html>

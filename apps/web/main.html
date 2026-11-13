@@ -7,54 +7,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webová aplikace pro podporu výuky finanční gramotnosti studentů SOU</title>
 </head>
-<body class="blue lighten-2" style="margin: 0; padding: 0; overflow: hidden;">    
+<body class="blue lighten-2" style="margin: 0; padding: 0; overflow: hidden;">
     <main style="height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden;">
         <div style="padding: 24px; background-color: #00000080; color: #FFFFFF; flex-shrink: 0;">
-            <h5>Vítejte zpět, <span class="blue-text text-lighten-3">Jan Novák</span></h5>
-            <h6>Dnes je <span class="blue-text text-lighten-3">10.1.</span>, čas <span
-                    class="blue-text text-lighten-3">1:01</span></h6>
-    
+            <h5>Vítejte zpět, <span class="blue-text text-lighten-3" data-user-name>…</span></h5>
+            <h6>Dnes je <span class="blue-text text-lighten-3" data-today-date>…</span>, čas <span
+                    class="blue-text text-lighten-3" data-today-time>…</span></h6>
+
             <br>
-            <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
+            <button data-logout="true" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                 style="width: 150px; text-transform: none; border-radius: 4px;">
                 Odhlásit se
             </button>
         </div>
-    
-        <div
-            style="padding: 24px 24px 110px 24px; background-color: #000000AA; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
-            
-            <!-- tohle treba vygenerovat dynamicky -->
-            <button class="card-panel grey darken-4 waves-effect waves-light" style="margin-bottom: 12px; width: 100%; text-align: left; border: none; display: block; cursor: pointer;">
-                <h5 class="white-text" style="margin: 0 0 6px 0; font-weight: bold; font-size: 1.3rem; text-transform: none;">Bankovní účet ></h5>
-                <p class="grey-text text-lighten-1" style="margin: 0 0 6px 0; font-size: 0.9rem; text-transform: none;">111-123456789/0100</p>
-                <p class="grey-text text-lighten-2" style="margin: 0; font-size: 0.8rem; text-transform: none;">123 456 789 CZK</p>
-            </button>
-            
-            <button class="card-panel grey darken-4 waves-effect waves-light" style="margin-bottom: 12px; width: 100%; text-align: left; border: none; display: block; cursor: pointer;">
-                <h5 class="white-text" style="margin: 0 0 6px 0; font-weight: bold; font-size: 1.3rem; text-transform: none;">Spořící účet ></h5>
-                <p class="grey-text text-lighten-1" style="margin: 0 0 6px 0; font-size: 0.9rem; text-transform: none;">111-123456789/0100</p>
-                <p class="grey-text text-lighten-2" style="margin: 0; font-size: 0.8rem; text-transform: none;">123 456 789 CZK</p>
-            </button>
 
+        <div id="accounts-list"
+            style="padding: 24px 24px 110px 24px; background-color: #000000AA; color: #FFFFFF; flex-grow: 1; overflow-y: auto; height: 0; min-height: 0;">
+            <p class="grey-text text-lighten-1">Načítám účty…</p>
         </div>
 
         <div
             style="position: absolute; bottom: env(safe-area-inset-bottom, 0px); left: 0; width: 100%; display: flex; justify-content: center; gap: 16px; padding: 24px; background: linear-gradient(to top, #00000066 50%, #00000000); pointer-events: none;">
-    
-            <button class="btn waves-effect waves-light blue accent-2 white-text" type="submit"
+
+            <button id="btn-pay" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                 style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                 Platba
             </button>
-    
-            <button class="btn waves-effect waves-light blue accent-2 white-text" type="button"
+
+            <button id="btn-qr" class="btn waves-effect waves-light blue accent-2 white-text" type="button"
                 style="width: 150px; text-transform: none; border-radius: 4px; pointer-events: auto;">
                 QR kód
             </button>
         </div>
-    
     </main>
-    
+
     <script type="text/javascript" src="js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script>
+        const session = FgApi.requireSession();
+        if (!session) throw new Error("redirect");
+
+        FgApi.fillUserHeader();
+        FgApi.bindLogoutButtons();
+
+        let primaryAccountId = null;
+
+        function accountCard({ title, number, balance, currency, href }) {
+            return `
+              <a href="${href}" class="card-panel grey darken-4 waves-effect waves-light"
+                 style="margin-bottom: 12px; width: 100%; text-align: left; border: none; display: block; cursor: pointer; text-decoration: none;">
+                <h5 class="white-text" style="margin: 0 0 6px 0; font-weight: bold; font-size: 1.3rem; text-transform: none;">${title} ></h5>
+                <p class="grey-text text-lighten-1" style="margin: 0 0 6px 0; font-size: 0.9rem; text-transform: none;">${number}</p>
+                <p class="grey-text text-lighten-2" style="margin: 0; font-size: 0.8rem; text-transform: none;">${FgApi.formatMoney(balance, currency)}</p>
+              </a>`;
+        }
+
+        async function loadAccounts() {
+            const listEl = document.getElementById("accounts-list");
+            try {
+                const [accountsRes, savings] = await Promise.all([
+                    FgApi.listAccounts(),
+                    FgApi.listSavings(),
+                ]);
+                const accounts = accountsRes.items || [];
+                primaryAccountId = accounts[0]?.accountId || null;
+
+                if (!accounts.length && !savings.length) {
+                    listEl.innerHTML = `<p class="grey-text text-lighten-1">Nemáte žádné účty. Spusťte seed TransactionManageru.</p>`;
+                    return;
+                }
+
+                const html = [
+                    ...accounts.map((acc) => accountCard({
+                        title: acc.name || "Bankovní účet",
+                        number: acc.accountNumber,
+                        balance: acc.balance,
+                        currency: acc.currency,
+                        href: `details.html?accountId=${encodeURIComponent(acc.accountId)}`,
+                    })),
+                    ...savings.map((acc) => accountCard({
+                        title: acc.name || "Spořicí účet",
+                        number: acc.accountNumber,
+                        balance: acc.balance,
+                        currency: acc.currency || "CZK",
+                        href: `details.html?accountId=${encodeURIComponent(acc.id)}&type=savings`,
+                    })),
+                ].join("");
+                listEl.innerHTML = html;
+            } catch (error) {
+                listEl.innerHTML = `<p class="red-text text-lighten-2">Účty se nepodařilo načíst: ${error.message}</p>`;
+            }
+        }
+
+        document.getElementById("btn-pay").addEventListener("click", () => {
+            if (!primaryAccountId) {
+                M.toast({ html: "Nejdřív potřebujete běžný účet" });
+                return;
+            }
+            window.location.href = `pay-1.html?fromAccountId=${encodeURIComponent(primaryAccountId)}`;
+        });
+
+        document.getElementById("btn-qr").addEventListener("click", async () => {
+            if (!primaryAccountId) {
+                M.toast({ html: "Nejdřív potřebujete běžný účet" });
+                return;
+            }
+            try {
+                const qr = await FgApi.getQrCode(primaryAccountId);
+                const w = window.open("", "_blank");
+                w.document.write(`<img alt="QR" src="${qr.pngBase64}" style="max-width:100%"/>`);
+            } catch (error) {
+                M.toast({ html: error.message });
+            }
+        });
+
+        loadAccounts();
+    </script>
 </body>
 </html>

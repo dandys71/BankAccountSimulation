@@ -14,14 +14,34 @@ import Institution from '../models/Institution.js';
 class UsersController {
   async createUser(req, res, next) {
     try {
-      const { username, password, displayName, email, organizationIds, institutionIds, roles } = req.body;
+      const {
+        username,
+        password,
+        displayName,
+        firstName,
+        lastName,
+        email,
+        organizationIds,
+        institutionIds,
+        roles,
+      } = req.body;
 
        // Kontrola organizace dodělat
        // Kontrola instituce dodělat
 
       const hashed = await bcrypt.hash(password, 10);
       // Vytvoření nového uživatele v DB
-      const newUser = new User({ username, password: hashed, displayName, email, organizationIds, institutionIds, roles });
+      const newUser = new User({
+        username,
+        password: hashed,
+        displayName,
+        firstName,
+        lastName,
+        email,
+        organizationIds,
+        institutionIds,
+        roles,
+      });
       await newUser.save();
 
       const userObj = newUser.toObject();

@@ -9,9 +9,9 @@ class OrganizationController {
 
   async createOrganization(req, res, next) {
     try {
-      const { name, note } = req.body;
+      const { name, note, email } = req.body;
 
-      const newOrganization = new Organization({ name, note });
+      const newOrganization = new Organization({ name, note, email });
       await newOrganization.save();
 
       res.status(201).json({ message: "Vytvořeno", organization: newOrganization });

@@ -1,63 +1,49 @@
-// src/services/savingAccountsController.js
-
 import * as savingAccounts from "../models/savingAccounts.js";
-import crypto from 'crypto'; //toto se používá jen na generování náhodného ID pro uživatele
 
-export const getAllSavingAccounts = () => {
-    return savingAccounts.getAllSavingAccounts();
+export const getAllSavingAccounts = async () => {
+  return savingAccounts.getAllSavingAccounts();
 };
 
-
-export const getSavingAccountById = (id) =>
-    savingAccounts.find(acc => acc.id === id);
-
-export const createSavingAccount = (data) => {
-    const newAccount = {
-        id: crypto.randomUUID(),
-        createdAt: new Date().toISOString(),
-        isClosed: false,
-        ...data
-    };
-    savingAccounts.createSavingAccount(newAccount)
-    return newAccount;
+export const getSavingAccountById = async (id) => {
+  return savingAccounts.findById(id);
 };
 
-export const getALLBalance = (id) => {
-    return savingAccounts.getBalance(id);
-}
-export const getALLHistory = (id) => {
-    return savingAccounts.getHistory(id);
-}
-
-export const getInterestSettings = (id) => {
-    return savingAccounts.getInterestSettings(id);
+export const createSavingAccount = async (data) => {
+  return savingAccounts.createSavingAccount(data);
 };
 
-export const transferALLToCurrent = (savingId, currentId, amount) => {
-    const current = savingAccounts.transferToCurrent(savingId, amount);
-    if(!current) return null;
-
-    return current;
-
-};
-export const updateInterestRate = (id, interestRate) => {
-    return savingAccounts.updateSavingAccount(id, { interestRate });
+export const getALLBalance = async (id) => {
+  return savingAccounts.getBalance(id);
 };
 
-export const updateSavingAccountById = (id, data) => {
-    return savingAccounts.updateSavingAccount(id, data);
+export const getALLHistory = async (id) => {
+  return savingAccounts.getHistory(id);
 };
 
-export const closeSavingAccountById = (id) => {
-    const account = savingAccounts.find(acc => acc.id === id);
-    if (!account) return null;
-
-    account.isClosed = true;
-    account.closedAt = new Date().toISOString();
-    return account;
+export const getInterestSettings = async (id) => {
+  return savingAccounts.getInterestSettings(id);
 };
 
-export const applyInterest = (institutionId, accountId, asOf, mode) => {
-    return savingAccounts.applyInterest(institutionId, accountId, asOf, mode);
+export const transferALLToCurrent = async (savingId, currentId, amount) => {
+  return savingAccounts.transferToCurrent(savingId, currentId, amount);
 };
 
+export const transferALLFromCurrent = async (savingId, currentId, amount) => {
+  return savingAccounts.transferFromCurrent(savingId, currentId, amount);
+};
+
+export const updateInterestRate = async (id, interestRate) => {
+  return savingAccounts.updateSavingAccount(id, { interestRate });
+};
+
+export const updateSavingAccountById = async (id, data) => {
+  return savingAccounts.updateSavingAccount(id, data);
+};
+
+export const closeSavingAccountById = async (id) => {
+  return savingAccounts.closeSavingAccount(id);
+};
+
+export const applyInterest = async (institutionId, accountId, asOf, mode) => {
+  return savingAccounts.applyInterest(institutionId, accountId, asOf, mode);
+};

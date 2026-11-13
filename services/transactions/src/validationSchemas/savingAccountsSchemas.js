@@ -35,6 +35,12 @@ export const transferToCurrentSchema= z.object({
     amount: z.number().positive()
 })
 
+export const transferFromCurrentSchema = z.object({
+    savingAccountId: z.string(),
+    currentAccountId: z.string(),
+    amount: z.number().positive()
+})
+
 export const getInterestSettingsSchema = z.object({
     id: z.string()
 });

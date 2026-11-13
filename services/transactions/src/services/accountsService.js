@@ -1,32 +1,27 @@
 /**
- * Servisa = „mozkovna“ (aplikační logika).
- * Neřeší HTTP. Dělá výpočty a rozhodnutí: ověří, jestli účet patří uživateli, spočítá zůstatek, uloží/načte data, spustí převod atd.
- * Vrací výsledek controlleru.
- *
- *
- * Tady bude "aplikační logika". Zatím pracujeme s pamětí,
- * později se to napojí na skutečnou databázi.
+ * Servisa = aplikační logika nad účty.
  */
-import {Accounts} from '../models/accounts.js';
+import { Accounts } from "../models/accounts.js";
+import * as TransactionModel from "../models/transactions.js";
+import { StandingOrder } from "../models/standingOrder.js";
+import QRCode from "qrcode";
 
-import QRCode from 'qrcode';
+function effectiveUserId(user, fallbackUserId) {
+  return user?.userId || user?.id || fallbackUserId;
+}
 
-//export = zpřístupníš proměnnou/funkci z jednoho souboru pro použití v jiném.
-//Normální funkce vrací hodnotu hned.
-//Async funkce vrací Promise (slib), protože dělá něco „na pozadí“ (čeká na síť/DB/časovač).
-//Pokud chceme počkat na výsledek, musíme tam, kde funkci voláme použít před konkrétní funkcí klíčové slovo await
 export async function getAccountById(accountId, user) {
-  return Accounts.findByIdForUser(accountId, user?.id);
+  return Accounts.findByIdForUser(accountId, effectiveUserId(user));
 }
 
 export async function listAccounts({ userId, page, pageSize }, user) {
-  const effectiveUser = userId || user?.id;
+  const effectiveUser = effectiveUserId(user, userId);
   const items = await Accounts.listByUser(effectiveUser, { page, pageSize });
   return { items, total: items.length, page, pageSize };
 }
 
 export async function createAccount(body, user) {
-  return Accounts.create({ ...body, balance: 0, isActive: true });
+  return Accounts.create({ ...body, balance: body.balance ?? 0, isActive: true });
 }
 
 export async function updateAccount(body, user) {
@@ -38,45 +33,38 @@ export async function closeAccount({ accountId, closeDate }, user) {
 }
 
 export async function getBalance(accountId, user) {
-  const acc = await Accounts.findByIdForUser(accountId, user?.id);
+  const acc = await Accounts.findByIdForUser(accountId, effectiveUserId(user));
   if (!acc) return null;
   return { accountId: acc.accountId, balance: acc.balance, currency: acc.currency };
 }
 
-export async function getHistory({ accountId }, user) {
-  // Pro demo vracíme prázdný seznam
-  return { items: [], total: 0, page: 1, pageSize: 50 };
+export async function getHistory({ accountId, page = 1, pageSize = 50 }, user) {
+  return TransactionModel.listByAccount(accountId, { page, pageSize });
 }
 
 export async function getStandingOrders(accountId, user) {
-  // zatim jen testovaci seznam
-  return [
-    {
-      standingOrderId: "so_123",
-      accountId: "acc_123",
-      templateId: "tem_123",
-      interval: "DAILY",
-      customCron: "",
-      dayOfMonth: 1,
-      amount: 123,
-      currency: "CZK",
-      nextRunAt: "2026-03-31T07:43:53.859Z",
-      isActive: true
-    }
-  ];
+  const acc = await Accounts.findByIdForUser(accountId, effectiveUserId(user));
+  if (!acc) return null;
+  return StandingOrder.list({ accountId, active: true });
 }
 
 export async function generateAccountNumber(user) {
-  // toto smí volat pouze admin, dodělat...
-  return { accountNumber: Accounts.generateAccountNumber() };
+  return Accounts.generateAccountNumber();
 }
 
-//export async function transferToSavings()
-//export async function transferFromSavings()
-
 export async function getQrCode({ accountId, amount, message }, user) {
-  const params = `test`;
-  const url = await QRCode.toDataURL(params);
+  const acc = await Accounts.findByIdForUser(accountId, effectiveUserId(user));
+  if (!acc) return null;
 
-  return { pngBase64: url };
+  const payload = [
+    `SPD*1.0`,
+    `ACC:${acc.accountNumber}`,
+    amount ? `AM:${amount}` : null,
+    message ? `MSG:${message}` : null,
+  ]
+    .filter(Boolean)
+    .join("*");
+
+  const url = await QRCode.toDataURL(payload);
+  return { pngBase64: url, payload };
 }

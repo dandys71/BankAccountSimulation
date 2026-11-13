@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon --legacy-watch src/app.js",
     "start": "node src/app.js",
+    "migrate": "node src/db/runMigrate.js",
     "lint": "echo \"(lint)\"",
     "test": "mocha --exit --recursive \"tests/**/*.test.js\"",
     "seed": "node src/seeds/accountSeed.js"

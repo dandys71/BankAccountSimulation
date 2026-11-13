@@ -98,6 +98,7 @@ class AccountsController {
     try {
       const q = validate(ValidationSchemas.getQrCodeQuerySchema, req.query);
       const data = await AccountsService.getQrCode(q, req.user);
+      if (!data) return res.status(404).json({ error: 'Not Found' });
       res.json(data);
     } catch (e) { next(e); }
   }
