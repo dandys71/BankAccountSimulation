@@ -5,7 +5,7 @@
 - [TODO.md](TODO.md) — co je hotové, co zbývá, bezpečnostní nálezy (P0 opravit jako první).
 - [OTAZKY.md](OTAZKY.md) — otevřené otázky na zadavatele. Odpovědi se pak přenesou sem a do TODO.
 - [LOKALNI-PROSTREDI.md](LOKALNI-PROSTREDI.md) — jak aplikaci spustit na vlastním PC.
-- [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md) — otevřené ekonomické otázky a úkol připravit katalog institucí, šablon a osudů.
+- [podklady/podklady-pro-kolegyni.docx](podklady/podklady-pro-kolegyni.docx) — otevřené ekonomické otázky pro kolegyni (Word, odpovídá se přímo do něj) a k tomu tabulka [podklady/katalog-instituci-sablon-osudu.xlsx](podklady/katalog-instituci-sablon-osudu.xlsx) k vyplnění.
 - [HOSTING.md](HOSTING.md) — požadavky na server a varianty hostingu v ČR i zdarma na test.
 
 Složka `original/` obsahuje zadání tak, jak vzniklo. Ber ji jako zdroj požadavků. Tento soubor je jen rejstřík, aby šlo zadání najít bez otevírání Wordu.

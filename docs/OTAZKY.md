@@ -6,7 +6,7 @@ a do `docs/README.md`, aby z nich vycházeli studenti i AI asistenti.
 
 Otázky jsou seřazené podle toho, jak moc blokují další vývoj.
 
-Stav (13. 11. 2026): všechny otázky prošel zadavatel. Otevřené zůstávají 7, 8, 9, 10, 13, 14, 15, 16, část 18, 20, 21 (úkol), 22, 23 — souhrn pro kolegyni je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md). Shrnutí rozhodnutí je v [README.md](README.md#upřesnění-zadání).
+Stav (13. 11. 2026): všechny otázky prošel zadavatel. Otevřené zůstávají 7, 8, 9, 10, 13, 14, 15, 16, část 18, 20, 21 (úkol), 22, 23 — souhrn pro kolegyni je v [podklady/podklady-pro-kolegyni.docx](podklady/podklady-pro-kolegyni.docx). Shrnutí rozhodnutí je v [README.md](README.md#upřesnění-zadání).
 
 ## A. Role a oprávnění (blokuje bezpečnostní opravy)
 
@@ -63,7 +63,7 @@ Stav (13. 11. 2026): všechny otázky prošel zadavatel. Otevřené zůstávají
 ## E. Šablony, instituce, osud
 
 21. Jaké instituce budou na startu (banka, pojišťovna, energetika, nájem, obchod, …)? Připravíte seznam šablon s částkami, nebo je vymýšlí studenti OA?
-    **Odpověď:** Připraví kolegyně (ekonomická část) do tabulky [podklady/katalog-instituci-sablon-osudu.xlsx](podklady/katalog-instituci-sablon-osudu.xlsx), zadání je v [PRO-KOLEGYNI.md](PRO-KOLEGYNI.md#úkol-katalog-institucí-šablon-a-osudů). Vstupní formát pro import (JSON) připraví vývoj podle jejích podkladů. *(13. 11. 2026)*
+    **Odpověď:** Připraví kolegyně (ekonomická část) do tabulky [podklady/katalog-instituci-sablon-osudu.xlsx](podklady/katalog-instituci-sablon-osudu.xlsx), zadání je v [podklady/podklady-pro-kolegyni.docx](podklady/podklady-pro-kolegyni.docx). Vstupní formát pro import (JSON) připraví vývoj podle jejích podkladů. *(13. 11. 2026)*
 22. Půjčka: jen jednorázový příjem + pevná splátka, nebo i úrok, RPSN a předčasné splacení? Investice a Bitcoin — je to v rozsahu letošního roku?
     **Odpověď:** nevím — zjistí zadavatel / kolegyně (ekonomická část).
 23. Osud: jak často a komu se má spouštět (náhodně všem, náhodně jednotlivcům, ručně vyučujícím)? Může osud stáhnout víc, než má student na účtu?
